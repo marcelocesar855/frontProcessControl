@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+HK:400,700&display=swap');
+
+* {
+    font-family: 'Noto Sans HK', sans-serif;
+}
+
+html, body, #root {
+    height: 100%;
+}
+
+.main {
+  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+  display: flex;
+  align-items: center;
+}
