@@ -17,3 +17,16 @@ html, body, #root {
 .title {
     margin: 5px auto 0px;
 }
+
+.page-item.active .page-link {
+    background-color: rgb(69, 77, 85);
+    border-color: rgb(69, 77, 85);
+}
+
+.page-link {
+    color: rgb(69, 77, 85);
+}
+
+.page-link:hover {
+    color: rgb(69, 77, 85);
+}
