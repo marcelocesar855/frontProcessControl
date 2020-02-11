@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import './styles/global.css'
 import Tabela from './components/Tabela'
 import Pesquisa from './components/Pesquisa';
+import Cadastro from './components/Cadastro';
 import { Row, Container, Badge, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
 
@@ -91,7 +92,9 @@ const handleNextClick = (e) => {
         </TabPane>
         <TabPane tabId='2'>
           <Row>
-            TESTE 1
+            <Cadastro>
+              
+            </Cadastro>
           </Row>
         </TabPane>
         <TabPane tabId='3'>
