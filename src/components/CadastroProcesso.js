@@ -1,13 +1,16 @@
 import React, {useState} from 'react';
 import { Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Card, CardTitle, CardBody, Button } from 'reactstrap';
 
-const Cadastro = () => {
+const CadastroProcesso = () => {
 
     const [dropdownOpenSetor, setOpenSetor] = useState(false)
     const toggleSetor = () => setOpenSetor(!dropdownOpenSetor)
     
     const [dropdownOpenAssunto, setOpenAssunto] = useState(false)
     const toggleAssunto = () => setOpenAssunto(!dropdownOpenAssunto)
+
+    const [dropdownOpenCaixa, setOpenCaixa] = useState(false)
+    const toggleCaixa = () => setOpenCaixa(!dropdownOpenCaixa)
 
     const [labelSetor, setLabelSetor] = useState('Setor')
     const changeSetor = (e) => setLabelSetor(e.target.textContent)
@@ -18,8 +21,8 @@ const Cadastro = () => {
     const [numeroProcesso, setNumeroProcesso] = useState('')
     const changeNumeroProcesso = (e) => setNumeroProcesso(e.target.value)
 
-    const [caixa, setCaixa] = useState('')
-    const changeCaixa = (e) => setCaixa(e.target.value)
+    const [labelCaixa, setLabelCaixa] = useState('Caixa')
+    const changeCaixa = (e) => setLabelCaixa(e.target.textContent)
 
     const [data, setData] = useState('')
     const changeData = (e) => setData(e.target.value)
@@ -27,7 +30,7 @@ const Cadastro = () => {
     const cleanForm = () => {
         setLabelSetor('Setor')
         setLabelAssunto('Assunto')
-        setCaixa('')
+        setLabelCaixa('Caixa')
         setNumeroProcesso('')
         setData('')
     }
@@ -46,8 +49,6 @@ const Cadastro = () => {
                         <Input value={numeroProcesso} id="processo" onChange={changeNumeroProcesso}/>
                         <Label for="data">Data autuação</Label>
                         <Input value={data} id="data" type="date" className='w-75' onChange={changeData}/>
-                        <Label for="caixa">Caixa</Label>
-                        <Input value={caixa} id="caixa" className='w-25' onChange={changeCaixa}/>
                     </FormGroup>
                     <FormGroup>
                         <ButtonDropdown isOpen={dropdownOpenSetor} toggle={toggleSetor}>
@@ -60,7 +61,17 @@ const Cadastro = () => {
                                 <DropdownItem>SUBLA</DropdownItem>
                             </DropdownMenu>
                         </ButtonDropdown>
-                        <ButtonDropdown className='ml-3' isOpen={dropdownOpenAssunto} toggle={toggleAssunto}>
+                        <ButtonDropdown isOpen={dropdownOpenCaixa} toggle={toggleCaixa} className='ml-2'>
+                            <DropdownToggle caret>
+                                {labelCaixa}
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem onClick={changeCaixa}>22</DropdownItem>
+                                <DropdownItem>23</DropdownItem>
+                                <DropdownItem>24</DropdownItem>
+                            </DropdownMenu>
+                        </ButtonDropdown>
+                        <ButtonDropdown className='ml-2' isOpen={dropdownOpenAssunto} toggle={toggleAssunto}>
                             <DropdownToggle caret>
                                 {labelAssunto}
                             </DropdownToggle>
@@ -79,4 +90,4 @@ const Cadastro = () => {
     )
 }
 
-export default Cadastro;
+export default CadastroProcesso;
