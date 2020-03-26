@@ -8,6 +8,7 @@ import CadastroCaixa from './components/CadastroCaixa';
 import EditarProcesso from './components/EditarProcesso';
 import EditarSetor from './components/EditarSetor';
 import EditarAssunto from './components/EditarAssunto';
+import EditarCaixa from './components/EditarCaixa';
 import { Row, Container, Badge, Nav, NavItem, NavLink, TabContent, TabPane, Col } from 'reactstrap';
 import classnames from 'classnames';
 
@@ -74,8 +75,13 @@ function App() {
             <Col>
             <EditarSetor/>
             </Col>
-            <Col className='col-5'>
+            <Col className='col-lg-5'>
             <EditarAssunto/>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <EditarCaixa/>
             </Col>
           </Row>
         </TabPane>

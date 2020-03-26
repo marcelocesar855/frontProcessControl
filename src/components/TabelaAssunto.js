@@ -49,7 +49,7 @@ const TabelaAssunto = ({
                     <td>{assunto.descricao}</td>
                     <td>
                       <Button onClick={() => {setSelected(assunto); toggleEdit()}}>Editar</Button>
-                      <Button className='mt-3' onClick={() => {setSelected(assunto); toggleDel()}}>Excluir</Button>
+                      <Button className='ml-3' onClick={() => {setSelected(assunto); toggleDel()}}>Excluir</Button>
                     </td>
                   </tr>
                 );
