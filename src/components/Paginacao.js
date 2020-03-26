@@ -3,6 +3,7 @@ import { PropTypes } from 'prop-types';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap'
 
 const Paginacao = ({
+    hidden,
     pagesCount,
     currentPage,
     handlePageClick,
@@ -11,7 +12,7 @@ const Paginacao = ({
    }) => {
 
     return (
-      <Pagination>
+      <Pagination hidden={hidden}>
         <PaginationItem disabled={currentPage <= 0}>
           <PaginationLink onClick={handlePreviousClick} previous href="#" />
         </PaginationItem>
