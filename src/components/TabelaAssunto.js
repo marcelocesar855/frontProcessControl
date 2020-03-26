@@ -3,8 +3,8 @@ import {Modal, ModalHeader, ModalBody, ModalFooter, Table, Form, FormGroup, Inpu
 import PropTypes from "prop-types";
 import Paginacao from './Paginacao';
 
-const TabelaSetor = ({
-  setores,
+const TabelaAssunto = ({
+  assuntos,
   hidden,
   currentPage,
   pageSize,
@@ -13,7 +13,7 @@ const TabelaSetor = ({
   handlePreviousClick,
   handleNextClick
 }) => {
-  const [selected, setSelected] = useState({nome : '', sigla : ''})
+  const [selected, setSelected] = useState({descricao : ''})
 
   const [showModalEdit, setShowModalEdit] = useState()
   const toggleEdit = () => setShowModalEdit(!showModalEdit)
@@ -21,15 +21,13 @@ const TabelaSetor = ({
   const [showModalDel, setShowModalDel] = useState()
   const toggleDel = () => setShowModalDel(!showModalDel)
 
-  const changeNome = (e) => setSelected({...selected, nome : e.target.value})
-    
-  const changeSigla = (e) => setSelected({...selected, sigla : e.target.value})
+  const changeDesc = (e) => setSelected({descricao : e.target.value})
 
-  const updateSetor = () => {
+  const updateAssunto = () => {
       
   }
 
-  const deleteSetor = () => {
+  const deleteAssunto = () => {
       
   }
 
@@ -38,22 +36,20 @@ const TabelaSetor = ({
         <Table striped bordered dark hover hidden={hidden}>
             <thead>
                 <tr>
-                  <th>Nome</th>
-                  <th>Sigla</th>
+                  <th>Descrição</th>
                   <th>Ação</th>
                 </tr>
             </thead>
             <tbody>
-            {setores
+            {assuntos
               .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
-              .map(setor => {
+              .map(assunto => {
                 return (
                   <tr>
-                    <td>{setor.nome}</td>
-                    <td>{setor.sigla}</td>
+                    <td>{assunto.descricao}</td>
                     <td>
-                      <Button onClick={() => {setSelected(setor); toggleEdit()}}>Editar</Button>
-                      <Button className='ml-3' onClick={() => {setSelected(setor); toggleDel()}}>Excluir</Button>
+                      <Button onClick={() => {setSelected(assunto); toggleEdit()}}>Editar</Button>
+                      <Button className='mt-3' onClick={() => {setSelected(assunto); toggleDel()}}>Excluir</Button>
                     </td>
                   </tr>
                 );
@@ -68,29 +64,27 @@ const TabelaSetor = ({
           handleNextClick={handleNextClick}
         />
         <Modal isOpen={showModalEdit} toggle={toggleEdit}>
-            <ModalHeader toggle={toggleEdit}>Editar setor</ModalHeader>
+            <ModalHeader toggle={toggleEdit}>Editar assunto</ModalHeader>
             <ModalBody>
                 <Form>
                     <FormGroup>
-                        <Label for="nome">Nome do setor</Label>
-                        <Input value={selected.nome} id="nome" onChange={changeNome}/>
-                        <Label for="sigla">Sigla</Label>
-                        <Input value={selected.sigla} id="sigla" className='w-50' onChange={changeSigla}/>
+                        <Label for="nome">Descrição</Label>
+                        <Input value={selected.descricao} id="nome" onChange={changeDesc}/>
                     </FormGroup>
                 </Form>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={() => {updateSetor(); toggleEdit()}}>Salvar</Button>
+                <Button color="primary" onClick={() => {updateAssunto(); toggleEdit()}}>Salvar</Button>
                 <Button className='ml-3' color="secondary" onClick={toggleEdit}>Cancelar</Button>
             </ModalFooter>
         </Modal>
         <Modal isOpen={showModalDel} toggle={toggleDel}>
-            <ModalHeader toggle={toggleDel}>Excluir setor</ModalHeader>
+            <ModalHeader toggle={toggleDel}>Excluir assunto</ModalHeader>
             <ModalBody>
-            <p className=" text-center">Você tem certeza que deseja excluir o setor <span className='font-weight-bold'>{selected.nome} ({selected.sigla})</span>?</p>
+            <p className=" text-center">Você tem certeza que deseja excluir o assunto <span className='font-weight-bold'>{selected.descricao}</span>?</p>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={() => {deleteSetor(); toggleDel()}}>Sim, exclua</Button>
+                <Button color="primary" onClick={() => {deleteAssunto(); toggleDel()}}>Sim, exclua</Button>
                 <Button className='ml-3' color="secondary" onClick={toggleDel}>Cancelar</Button>
             </ModalFooter>
         </Modal>
@@ -98,7 +92,7 @@ const TabelaSetor = ({
   )
 }
 
-TabelaSetor.propTypes = {
+TabelaAssunto.propTypes = {
   registrations: PropTypes.array.isRequired,
   pagesCount: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
@@ -108,4 +102,4 @@ TabelaSetor.propTypes = {
   handleNextClick: PropTypes.func.isRequired
 };
 
-export default TabelaSetor;
+export default TabelaAssunto;

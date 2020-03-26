@@ -6,6 +6,8 @@ import CadastroSetor from './components/CadastroSetor';
 import CadastroAssunto from './components/CadastroAssunto';
 import CadastroCaixa from './components/CadastroCaixa';
 import EditarProcesso from './components/EditarProcesso';
+import EditarSetor from './components/EditarSetor';
+import EditarAssunto from './components/EditarAssunto';
 import { Row, Container, Badge, Nav, NavItem, NavLink, TabContent, TabPane, Col } from 'reactstrap';
 import classnames from 'classnames';
 
@@ -63,9 +65,19 @@ function App() {
           </Row>
         </TabPane>
         <TabPane tabId='3'>
-          <Col>
-            <EditarProcesso/>
-          </Col>
+          <Row>
+            <Col>
+              <EditarProcesso/>
+            </Col>
+            </Row>
+            <Row>
+            <Col>
+            <EditarSetor/>
+            </Col>
+            <Col className='col-5'>
+            <EditarAssunto/>
+            </Col>
+          </Row>
         </TabPane>
       </TabContent>
       </Container>
