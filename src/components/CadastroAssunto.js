@@ -23,8 +23,8 @@ const CadastroAssunto = () => {
                         <Label for="nome">Descrição</Label>
                         <Input value={descAssunto} id="nome" onChange={changeDescAssunto}/>
                     </FormGroup>
-                    <Button outline onClick={storeAssunto}>Salvar</Button>
-                    <Button className='ml-3' outline onClick={cleanForm}>Cancelar</Button>
+                    <Button color="primary" onClick={storeAssunto}>Salvar</Button>
+                    <Button className='ml-3' outline color="secondary" onClick={cleanForm}>Cancelar</Button>
                 </Form>
             </CardBody>
        </Card>

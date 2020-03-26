@@ -29,8 +29,8 @@ const CadastroSetor = () => {
                         <Label for="sigle">Sigla do setor</Label>
                         <Input value={siglaSetor} className="w-50" id="sigla" onChange={changeSiglaSetor}/>
                     </FormGroup>
-                    <Button outline onClick={storeSetor}>Salvar</Button>
-                    <Button className='ml-3' outline onClick={cleanForm}>Cancelar</Button>
+                    <Button color="primary" onClick={storeSetor}>Salvar</Button>
+                    <Button className='ml-3' outline color="secondary" onClick={cleanForm}>Cancelar</Button>
                 </Form>
             </CardBody>
        </Card>

@@ -32,7 +32,7 @@ const CadastroProcesso = () => {
         setLabelAssunto('Assunto')
         setLabelCaixa('Caixa')
         setNumeroProcesso('')
-        setData('')
+        setData(null)
     }
 
     const storeProcesso = () => {
@@ -82,8 +82,8 @@ const CadastroProcesso = () => {
                             </DropdownMenu>
                         </ButtonDropdown>
                     </FormGroup>
-                    <Button outline onClick={storeProcesso}>Salvar</Button>
-                    <Button className='ml-3' outline onClick={cleanForm}>Cancelar</Button>
+                    <Button color="primary" onClick={storeProcesso}>Salvar</Button>
+                    <Button className='ml-3' outline color="secondary" onClick={cleanForm}>Cancelar</Button>
                 </Form>
             </CardBody>
        </Card>

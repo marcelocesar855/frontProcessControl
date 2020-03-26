@@ -64,8 +64,9 @@ const CadastroCaixa = () => {
                         </Col>
                     </Row>
                     </FormGroup>
-                    <Button outline onClick={storeCaixa}>Salvar</Button>
-                    <Button className='ml-3' outline onClick={cleanForm}>Cancelar</Button>
+                    <Button color="primary" onClick={storeCaixa}>Salvar</Button>
+                    <Button className='ml-3' outline color="secondary" onClick={cleanForm}>Cancelar</Button>
+                    
                 </Form>
             </CardBody>
        </Card>
