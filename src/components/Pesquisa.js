@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import Tabela from './Tabela'
 import Api from '../services/Api'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
 import { InputGroup, Input, InputGroupAddon, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Row } from 'reactstrap';
 
 class Pesquisa extends Component {
@@ -72,18 +74,28 @@ class Pesquisa extends Component {
 
     cleanFilters = () => {
         this.setState({
-            labelSetor : {sigla : 'Setor', id : 0},
-            labelAssunto : {descricao : 'Assunto', id : 0},
+            labelSetor : {sigla : 'Setor', id : null},
+            labelAssunto : {descricao : 'Assunto', id : null},
             numero : ''
         })
     }
 
     search = async () => {
+        toast.configure()
         const {numero} = this.state
         const setorId = this.state.labelSetor.id
         const assuntoId = this.state.labelAssunto.id
         await Api.post('processos-params/', {numero,setorId,assuntoId}).then( response => {
             this.setState({processos : response.data})
+            if (this.state.processos.length <= 0){
+                toast.info("Nenhum processo encontrado com os filtros informados",{
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true
+                })
+            }
         }).catch(erro => {
             console.log(erro)
         })
