@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment'
 import { Table } from 'reactstrap';
 import PropTypes from "prop-types";
 import Paginacao from './Paginacao';
@@ -34,12 +35,12 @@ const Tabela = ({
                 return (
                   <tr>
                     <td>{processo.numero}</td>
-                    <td>{processo.data}</td>
-                    <td>{processo.setor}</td>
-                    <td>{processo.assunto}</td>
-                    <td>{processo.caixa}</td>
-                    <td>{processo.prateleira}</td>
-                    <td>{processo.estante}</td>
+                    <td>{moment(processo.data).format('DD/MM/YYYY')}</td>
+                    <td>{processo.caixa.setor.sigla}</td>
+                    <td>{processo.assunto.descricao}</td>
+                    <td>{processo.caixa.numero}</td>
+                    <td>{processo.caixa.prateleira}</td>
+                    <td>{processo.caixa.estante}</td>
                   </tr>
                 );
               })}

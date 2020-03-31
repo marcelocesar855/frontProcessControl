@@ -38,17 +38,17 @@ const CadastroCaixa = () => {
                     <Row form>
                         <Col>
                             <Label for="numero">Número da caixa</Label>
-                            <Input value={numeroCaixa} id="numero" className='w-50' onChange={changeNumeroCaixa}/>
+                            <Input value={numeroCaixa} type='number' id="numero" className='w-50' onChange={changeNumeroCaixa}/>
                         </Col>
                         <Col>
                             <Label for="estante">Estante</Label>
-                            <Input value={estante} id="estante" className='w-50' onChange={changeEstante}/>
+                            <Input value={estante} id="estante" type='number' className='w-50' onChange={changeEstante}/>
                         </Col>
                     </Row>
                     <Row form>
                         <Col>
                             <Label for="prateleira">Prateleira</Label>
-                            <Input value={prateleira} id="prateleira" className='w-50' onChange={changePrateleira}/>
+                            <Input value={prateleira} id="prateleira" type='number' className='w-50' onChange={changePrateleira}/>
                         </Col>
                         <Col>
                             <ButtonDropdown isOpen={dropdownOpenSetor} toggle={toggleSetor}  className="pt-4">

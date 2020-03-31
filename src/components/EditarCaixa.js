@@ -63,7 +63,7 @@ const EditarCaixa = () => {
                 <CardBody>
                 <Row className="pb-3 w-75">
                     <InputGroup>
-                        <Input className='rounded-left' placeholder='Número da caixa' value={numero} onChange={changeNumero}/>
+                        <Input className='rounded-left' type='number' placeholder='Número da caixa' value={numero} onChange={changeNumero}/>
                         <InputGroupAddon addonType="append"><Button className='rounded-right' onClick={buscarCaixa}>Buscar</Button></InputGroupAddon>
                         <ButtonDropdown className='ml-3' isOpen={dropdownOpenSetor} toggle={toggleSetor}>
                             <DropdownToggle caret>
@@ -75,8 +75,8 @@ const EditarCaixa = () => {
                                 <DropdownItem>SUBLA</DropdownItem>
                             </DropdownMenu>
                         </ButtonDropdown>
-                        <Input className='rounded-left ml-3' placeholder='Estante' value={estante} onChange={changeEstante}/>
-                        <Input className='rounded-right' placeholder='Prateleira' value={prateleira} onChange={changePrateleira}/>
+                        <Input className='rounded-left ml-3' type='number' placeholder='Estante' value={estante} onChange={changeEstante}/>
+                        <Input className='rounded-right' type='number' placeholder='Prateleira' value={prateleira} onChange={changePrateleira}/>
                         <Button className='ml-3' outline onClick={cleanFilters}>Limpar filtros</Button>
                     </InputGroup>
                 </Row>
