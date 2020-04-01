@@ -65,16 +65,18 @@ const TabelaProcesso = ({
               .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
               .map(processo => {
                 return (
-                  <tr>
-                    <td>{processo.numero}</td>
-                    <td>{processo.data}</td>
-                    <td>{processo.setor}</td>
-                    <td>{processo.assunto}</td>
-                    <td>
-                      <Button onClick={() => {setSelected(processo); toggleEdit()}}>Editar</Button>
-                      <Button className='ml-3' onClick={() => {setSelected(processo); toggleDel()}}>Excluir</Button>
-                    </td>
-                  </tr>
+                  <React.Fragment key={processo.key}>
+                    <tr>
+                      <td>{processo.numero}</td>
+                      <td>{processo.data}</td>
+                      <td>{processo.setor}</td>
+                      <td>{processo.assunto}</td>
+                      <td>
+                        <Button onClick={() => {setSelected(processo); toggleEdit()}}>Editar</Button>
+                        <Button className='ml-3' onClick={() => {setSelected(processo); toggleDel()}}>Excluir</Button>
+                      </td>
+                    </tr>
+                  </React.Fragment>
                 );
               })}
             </tbody>
@@ -151,7 +153,6 @@ const TabelaProcesso = ({
 }
 
 TabelaProcesso.propTypes = {
-  registrations: PropTypes.array.isRequired,
   pagesCount: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,

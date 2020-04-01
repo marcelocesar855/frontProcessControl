@@ -154,7 +154,7 @@ class CadastroProcesso extends Component {
                                 <DropdownMenu>
                                     {this.state.setores.map(setor => {
                                         return(
-                                            <DropdownItem onClick={this.changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
+                                            <DropdownItem key={setor.id} onClick={this.changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
                                         )
                                     })}
                                 </DropdownMenu>
@@ -166,7 +166,7 @@ class CadastroProcesso extends Component {
                                 <DropdownMenu>
                                     {this.state.caixas.map(caixa => {
                                         return(
-                                            <DropdownItem onClick={this.changeCaixa} disabled={caixa.id === 0 ? true : false} value={caixa.id}>{caixa.numero}</DropdownItem>
+                                            <DropdownItem key={caixa.id} onClick={this.changeCaixa} disabled={caixa.id === 0 ? true : false} value={caixa.id}>{caixa.numero}</DropdownItem>
                                         )
                                     })}
                                 </DropdownMenu>
@@ -178,7 +178,7 @@ class CadastroProcesso extends Component {
                                 <DropdownMenu>
                                     {this.state.assuntos.map(assunto => {
                                         return(
-                                            <DropdownItem onClick={this.changeAssunto} value={assunto.id}>{assunto.descricao}</DropdownItem>
+                                            <DropdownItem key={assunto.id} onClick={this.changeAssunto} value={assunto.id}>{assunto.descricao}</DropdownItem>
                                         )
                                     })}
                                 </DropdownMenu>

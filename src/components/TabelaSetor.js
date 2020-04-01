@@ -48,6 +48,7 @@ const TabelaSetor = ({
               .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
               .map(setor => {
                 return (
+                  <React.Fragment key={setor.id}>
                   <tr>
                     <td>{setor.nome}</td>
                     <td>{setor.sigla}</td>
@@ -56,6 +57,7 @@ const TabelaSetor = ({
                       <Button className='ml-3' onClick={() => {setSelected(setor); toggleDel()}}>Excluir</Button>
                     </td>
                   </tr>
+                  </React.Fragment>
                 );
               })}
             </tbody>
@@ -99,7 +101,6 @@ const TabelaSetor = ({
 }
 
 TabelaSetor.propTypes = {
-  registrations: PropTypes.array.isRequired,
   pagesCount: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,

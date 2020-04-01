@@ -57,16 +57,18 @@ const TabelaCaixas = ({
               .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
               .map(caixa => {
                 return (
-                  <tr>
-                    <td>{caixa.numero}</td>
-                    <td>{caixa.setor}</td>
-                    <td>{caixa.estante}</td>
-                    <td>{caixa.prateleira}</td>
-                    <td>
-                      <Button onClick={() => {setSelected(caixa); toggleEdit()}}>Editar</Button>
-                      <Button className='ml-3' onClick={() => {setSelected(caixa); toggleDel()}}>Excluir</Button>
-                    </td>
-                  </tr>
+                  <React.Fragment key={caixa.id}>
+                    <tr>
+                      <td>{caixa.numero}</td>
+                      <td>{caixa.setor}</td>
+                      <td>{caixa.estante}</td>
+                      <td>{caixa.prateleira}</td>
+                      <td>
+                        <Button onClick={() => {setSelected(caixa); toggleEdit()}}>Editar</Button>
+                        <Button className='ml-3' onClick={() => {setSelected(caixa); toggleDel()}}>Excluir</Button>
+                      </td>
+                    </tr>
+                  </React.Fragment>
                 );
               })}
             </tbody>
@@ -135,7 +137,6 @@ const TabelaCaixas = ({
 }
 
 TabelaCaixas.propTypes = {
-  registrations: PropTypes.array.isRequired,
   pagesCount: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,

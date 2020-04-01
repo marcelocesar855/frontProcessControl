@@ -93,7 +93,6 @@ const TabelaAssunto = ({
 }
 
 TabelaAssunto.propTypes = {
-  registrations: PropTypes.array.isRequired,
   pagesCount: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,

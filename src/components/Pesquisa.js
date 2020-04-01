@@ -1,14 +1,20 @@
 import React, {Component} from 'react'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import moment from 'moment'
+import * as processosActions from '../actions/processos';
 import Tabela from './Tabela'
 import Api from '../services/Api'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import { InputGroup, Input, InputGroupAddon, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Row } from 'reactstrap';
+import { InputGroup, Input, InputGroupAddon, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Row, Table } from 'reactstrap';
 
 class Pesquisa extends Component {
+    constructor(props) {
+        super(props);
+    }
 
     state = {
-        processos : [],
         setores : [],
         assuntos : [],
         currentPage : 0,
@@ -21,7 +27,7 @@ class Pesquisa extends Component {
 
     componentDidMount = async () => {
         await Api.get('processos-dados/').then( response => {
-            this.setState({processos : response.data})
+           this.props.searchProcesso(response.data)
         }).catch(erro => {
             console.log(erro)
         })
@@ -113,7 +119,7 @@ class Pesquisa extends Component {
                         <DropdownMenu>
                             {this.state.setores.map(setor => {
                                 return(
-                                    <DropdownItem onClick={this.changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
+                                    <DropdownItem key={setor.id} onClick={this.changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
                                 )
                             })}
                         </DropdownMenu>
@@ -125,7 +131,7 @@ class Pesquisa extends Component {
                         <DropdownMenu>
                             {this.state.assuntos.map(assunto => {
                                 return(
-                                    <DropdownItem onClick={this.changeAssunto} value={assunto.id}>{assunto.descricao}</DropdownItem>
+                                    <DropdownItem key={assunto.id} onClick={this.changeAssunto} value={assunto.id}>{assunto.descricao}</DropdownItem>
                                 )
                             })}
                         </DropdownMenu>
@@ -136,18 +142,18 @@ class Pesquisa extends Component {
                 </InputGroup>
             </Row>
             <Row>
-                <Tabela processos={this.state.processos}
-                pageSize={10}
-                pagesCount={Math.round((this.state.processos.length / 10) + 0.5)}
-                currentPage={this.state.currentPage}
-                handlePageClick={this.handlePageClick}
-                handlePreviousClick={this.handlePreviousClick}
-                handleNextClick={this.handleNextClick}
-                />
-                </Row>
+                <Tabela/>
+            </Row>
             </div>
         )
     }
 }
 
-export default Pesquisa;
+const mapStateToProps = state => ({
+    processos: state.processos,
+  });
+  
+  const mapDispatchToProps = dispatch =>
+    bindActionCreators(processosActions, dispatch);
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(Pesquisa);

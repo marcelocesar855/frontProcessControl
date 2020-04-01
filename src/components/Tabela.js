@@ -1,19 +1,17 @@
-import React from 'react';
+import React, { Component } from 'react';
 import moment from 'moment'
+import { connect } from 'react-redux';
 import { Table } from 'reactstrap';
-import PropTypes from "prop-types";
 import Paginacao from './Paginacao';
 
-const Tabela = ({
-  processos,
-  currentPage,
-  pageSize,
-  pagesCount,
-  handlePageClick,
-  handlePreviousClick,
-  handleNextClick
-}) => {
+class Tabela extends Component {
 
+  constructor(props) {
+    super(props);
+    console.log(props)
+}
+
+  render(){
     return (
       <React.Fragment>
         <Table striped bordered dark hover>
@@ -29,42 +27,38 @@ const Tabela = ({
                 </tr>
             </thead>
             <tbody>
-            {processos
-              .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
+            {this.props.processos
+              .slice(this.props.currentPage * this.props.pageSize, (this.props.currentPage + 1) * this.props.pageSize)
               .map(processo => {
                 return (
-                  <tr>
-                    <td>{processo.numero}</td>
-                    <td>{moment(processo.data).format('DD/MM/YYYY')}</td>
-                    <td>{processo.caixa.setor.sigla}</td>
-                    <td>{processo.assunto.descricao}</td>
-                    <td>{processo.caixa.numero}</td>
-                    <td>{processo.caixa.prateleira}</td>
-                    <td>{processo.caixa.estante}</td>
-                  </tr>
+                  <React.Fragment key={processo.id}>
+                    <tr>
+                      <td>{processo.numero}</td>
+                      <td>{moment(processo.data).format('DD/MM/YYYY')}</td>
+                      <td>{processo.caixa.setor.sigla}</td>
+                      <td>{processo.assunto.descricao}</td>
+                      <td>{processo.caixa.numero}</td>
+                      <td>{processo.caixa.prateleira}</td>
+                      <td>{processo.caixa.estante}</td>
+                    </tr>
+                  </React.Fragment>
                 );
               })}
             </tbody>
         </Table>
         <Paginacao
-          pagesCount={pagesCount}
-          currentPage={currentPage}
-          handlePageClick={handlePageClick}
-          handlePreviousClick={handlePreviousClick}
-          handleNextClick={handleNextClick}
+          pagesCount={this.props.pagesCount}
+          currentPage={this.props.currentPage}
+          handlePageClick={this.props.handlePageClick}
+          handlePreviousClick={this.props.handlePreviousClick}
+          handleNextClick={this.props.handleNextClick}
         />
       </React.Fragment>
-  )
+  )}
 }
 
-Tabela.propTypes = {
-  registrations: PropTypes.array.isRequired,
-  pagesCount: PropTypes.number.isRequired,
-  currentPage: PropTypes.number.isRequired,
-  pageSize: PropTypes.number.isRequired,
-  handlePageClick: PropTypes.func.isRequired,
-  handlePreviousClick: PropTypes.func.isRequired,
-  handleNextClick: PropTypes.func.isRequired
-};
+const mapStateToProps = state => ({
+  processos: state.processos,
+});
 
-export default Tabela;
+export default connect(mapStateToProps)(Tabela);
