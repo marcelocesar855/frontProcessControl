@@ -7,7 +7,7 @@ export default function processos(state = [], action) {
       case 'UPDATE_PROCESSO':
       return null
       case 'SEARCH_PROCESSOS':
-      return state = [action.processos]
+        return action.processos
     default:
       return state;
   }

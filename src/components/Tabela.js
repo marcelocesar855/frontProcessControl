@@ -6,12 +6,26 @@ import Paginacao from './Paginacao';
 
 class Tabela extends Component {
 
-  constructor(props) {
-    super(props);
-    console.log(props)
-}
+  state = {
+    currentPage : 0,
+  }
 
-  render(){
+  handlePageClick = (e, index) => {
+    e.preventDefault();
+    this.setState({currentPage : index});
+  };
+
+  handlePreviousClick = (e) => {
+      e.preventDefault();
+      this.setState({currentPage : this.state.currentPage - 1});
+  }
+
+  handleNextClick = (e) => {
+      e.preventDefault();
+      this.setState({currentPage : this.state.currentPage + 1});
+  }
+
+  render(){console.log('Render: ', this.props.processos)
     return (
       <React.Fragment>
         <Table striped bordered dark hover>
@@ -28,7 +42,7 @@ class Tabela extends Component {
             </thead>
             <tbody>
             {this.props.processos
-              .slice(this.props.currentPage * this.props.pageSize, (this.props.currentPage + 1) * this.props.pageSize)
+              .slice(this.state.currentPage * 10, (this.state.currentPage + 1) * 10)
               .map(processo => {
                 return (
                   <React.Fragment key={processo.id}>
@@ -47,11 +61,11 @@ class Tabela extends Component {
             </tbody>
         </Table>
         <Paginacao
-          pagesCount={this.props.pagesCount}
-          currentPage={this.props.currentPage}
-          handlePageClick={this.props.handlePageClick}
-          handlePreviousClick={this.props.handlePreviousClick}
-          handleNextClick={this.props.handleNextClick}
+          pagesCount={Math.round((this.props.processos.length / 10) + 0.4)}
+          currentPage={this.state.currentPage}
+          handlePageClick={this.handlePageClick}
+          handlePreviousClick={this.handlePreviousClick}
+          handleNextClick={this.handleNextClick}
         />
       </React.Fragment>
   )}

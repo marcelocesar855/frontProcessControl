@@ -1,13 +1,12 @@
 import React, {Component} from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import moment from 'moment'
 import * as processosActions from '../actions/processos';
 import Tabela from './Tabela'
 import Api from '../services/Api'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import { InputGroup, Input, InputGroupAddon, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Row, Table } from 'reactstrap';
+import { InputGroup, Input, InputGroupAddon, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Row } from 'reactstrap';
 
 class Pesquisa extends Component {
     constructor(props) {
@@ -17,7 +16,6 @@ class Pesquisa extends Component {
     state = {
         setores : [],
         assuntos : [],
-        currentPage : 0,
         dropdownOpenSetor : false,
         dropdownOpenAssunto : false,
         labelSetor : {sigla : 'Setor', id : null},
@@ -41,21 +39,6 @@ class Pesquisa extends Component {
         }).catch(erro => {
             console.log(erro)
         })
-    }
-
-    handlePageClick = (e, index) => {
-        e.preventDefault();
-        this.setState({currentPage : index});
-    };
-
-    handlePreviousClick = (e) => {
-        e.preventDefault();
-        this.setState({currentPage : this.state.currentPage - 1});
-    }
-
-    handleNextClick = (e) => {
-        e.preventDefault();
-        this.setState({currentPage : this.state.currentPage + 1});
     }
 
     toggleSetor = () => this.setState({dropdownOpenSetor : !this.state.dropdownOpenSetor})
