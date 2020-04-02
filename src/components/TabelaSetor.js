@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {Modal, ModalHeader, ModalBody, ModalFooter, Table, Form, FormGroup, Input, Label, Button } from 'reactstrap';
-import PropTypes from "prop-types";
 import Paginacao from './Paginacao';
 
 const TabelaSetor = ({
@@ -99,14 +98,5 @@ const TabelaSetor = ({
       </div>
   )
 }
-
-TabelaSetor.propTypes = {
-  pagesCount: PropTypes.number.isRequired,
-  currentPage: PropTypes.number.isRequired,
-  pageSize: PropTypes.number.isRequired,
-  handlePageClick: PropTypes.func.isRequired,
-  handlePreviousClick: PropTypes.func.isRequired,
-  handleNextClick: PropTypes.func.isRequired
-};
 
 export default TabelaSetor;

@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {Col, Row, Modal, ModalHeader, ModalBody, ModalFooter, Table, Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Button } from 'reactstrap';
-import PropTypes from "prop-types";
 import Paginacao from './Paginacao';
 
 const TabelaCaixas = ({
@@ -135,14 +134,5 @@ const TabelaCaixas = ({
       </div>
   )
 }
-
-TabelaCaixas.propTypes = {
-  pagesCount: PropTypes.number.isRequired,
-  currentPage: PropTypes.number.isRequired,
-  pageSize: PropTypes.number.isRequired,
-  handlePageClick: PropTypes.func.isRequired,
-  handlePreviousClick: PropTypes.func.isRequired,
-  handleNextClick: PropTypes.func.isRequired
-};
 
 export default TabelaCaixas;

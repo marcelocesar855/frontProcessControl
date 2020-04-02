@@ -1,8 +1,7 @@
-export function addProcesso(processo, filtros) {
+export function addProcesso(processo) {
   return {
     type: 'ADD_PROCESSO',
-    processo,
-    filtros
+    processo
   }
 }
 
