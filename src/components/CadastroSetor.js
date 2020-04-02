@@ -1,84 +1,72 @@
-import React, {useState} from 'react';
+import React, { Component} from 'react';
 import Api from '../services/Api'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as setoresActions from '../actions/setores';
 import { Form, FormGroup, Input, Label, Card, CardTitle, CardBody, Button } from 'reactstrap';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import * as toast from '../utils/toasts'
 
-const CadastroSetor = () => {
+class CadastroSetor extends Component {
 
-    const [nomeSetor, setNomeSetor] = useState('')
-    const changeNomeSetor = (e) => setNomeSetor(e.target.value)
-
-    const [siglaSetor, setSiglaSetor] = useState('')
-    const changeSiglaSetor = (e) => setSiglaSetor(e.target.value)
-
-    const cleanForm = () => {
-        setNomeSetor('')
-        setSiglaSetor('')
+    state = {
+        nome : '',
+        sigla : ''
     }
 
-    const storeSetor = () => {
-        toast.configure()
-        var nome = nomeSetor
-        var sigla = siglaSetor
+    changeNome = (e) => this.setState({nome : e.target.value})
+
+    changeSigla = (e) => this.setState({sigla : e.target.value})
+
+    cleanForm = () => {
+        this.setState({nome : ''})
+        this.setState({sigla : ''})
+    }
+
+    storeSetor = () => {
+        var {nome, sigla} = this.state
         if (nome !== '' ) {
             if (sigla !== '') {
                 Api.post('setor/', {nome, sigla}).then( response => {
-                    toast.success("Setor cadastrado com sucesso",{
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true
-                    })
-                    cleanForm()
-                }).catch( erro => {
-                    toast.error("Erro ao cadastrar o setor",{
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true
-                    })
-                    cleanForm()
+                    toast.sucesso("Setor cadastrado com sucesso")
+                    this.props.addSetor(response.data)
+                    this.cleanForm()
+                }).catch( () => {
+                    toast.erro("Erro ao cadastrar o setor")
+                    this.cleanForm()
                 })
             }else {
-                toast.error("Informe a sigla do setor",{
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true
-                })
+                toast.erro("Informe a sigla do setor")
             }
         }else {
-            toast.error("Informe o nome do setor",{
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true
-            })
+            toast.erro("Informe o nome do setor")
         }
     }
-
-    return (
-        <Card className="p-3">
-            <CardTitle><h3>Cadastro de setores</h3></CardTitle>
-            <CardBody>
-                <Form>
-                    <FormGroup>
-                        <Label for="nomeSetor">Nome do setor</Label>
-                        <Input value={nomeSetor} id="nomeSetor" onChange={changeNomeSetor}/>
-                        <Label for="sigle">Sigla do setor</Label>
-                        <Input value={siglaSetor} className="w-50" id="siglaSetor" onChange={changeSiglaSetor}/>
-                    </FormGroup>
-                    <Button color="primary" onClick={storeSetor}>Salvar</Button>
-                    <Button className='ml-3' outline color="secondary" onClick={cleanForm}>Cancelar</Button>
-                </Form>
-            </CardBody>
-       </Card>
-    )
+    render () {
+        return (
+            <Card className="p-3">
+                <CardTitle><h3>Cadastro de setores</h3></CardTitle>
+                <CardBody>
+                    <Form>
+                        <FormGroup>
+                            <Label for="nome">Nome do setor</Label>
+                            <Input value={this.state.nome} id="nome" onChange={this.changeNome}/>
+                            <Label for="sigle">Sigla do setor</Label>
+                            <Input value={this.state.sigla} className="w-50" id="sigla" onChange={this.changeSigla}/>
+                        </FormGroup>
+                        <Button color="primary" onClick={this.storeSetor}>Salvar</Button>
+                        <Button className='ml-3' outline color="secondary" onClick={this.cleanForm}>Cancelar</Button>
+                    </Form>
+                </CardBody>
+        </Card>
+        )
+    }
 }
 
-export default CadastroSetor;
+const mapStateToProps = state => ({
+    setores: state.setores
+  });
+  
+  const mapDispatchToProps = dispatch =>
+    bindActionCreators(setoresActions, dispatch);
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(CadastroSetor);

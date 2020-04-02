@@ -1,17 +1,33 @@
 import React, {useState} from 'react';
+import Api from '../services/Api'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as assuntosActions from '../actions/assuntos';
 import { Form, FormGroup, Input, Label, Card, CardTitle, CardBody, Button } from 'reactstrap';
+import * as toast from '../utils/toasts'
 
-const CadastroAssunto = () => {
+const CadastroAssunto = (props) => {
 
-    const [descAssunto, setDescAssunto] = useState('')
-    const changeDescAssunto = (e) => setDescAssunto(e.target.value)
+    const [descricao, setDescricao] = useState('')
+    const changeDescricao = (e) => setDescricao(e.target.value)
 
     const cleanForm = () => {
-        setDescAssunto('')
+        setDescricao('')
     }
 
     const storeAssunto = () => {
-        
+        if (descricao !== '' ) {
+            Api.post('assunto/', {descricao}).then( response => {
+                toast.sucesso("Assunto cadastrado com sucesso")
+                props.addAssunto(response.data)
+                cleanForm()
+            }).catch( () => {
+                toast.erro("Erro ao cadastrar o assunto")
+                cleanForm()
+            })
+        }else {
+            toast.erro("Informe a descrição do assunto")
+        }
     }
 
     return (
@@ -20,8 +36,8 @@ const CadastroAssunto = () => {
             <CardBody>
                 <Form>
                     <FormGroup>
-                        <Label for="nome">Descrição</Label>
-                        <Input value={descAssunto} id="nome" onChange={changeDescAssunto}/>
+                        <Label for="descricao">Descrição</Label>
+                        <Input value={descricao} id="descricao" onChange={changeDescricao}/>
                     </FormGroup>
                     <Button color="primary" onClick={storeAssunto}>Salvar</Button>
                     <Button className='ml-3' outline color="secondary" onClick={cleanForm}>Cancelar</Button>
@@ -31,4 +47,11 @@ const CadastroAssunto = () => {
     )
 }
 
-export default CadastroAssunto;
+const mapStateToProps = state => ({
+    assuntos: state.assunstos
+});
+  
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(assuntosActions, dispatch);
+  
+export default connect(mapStateToProps, mapDispatchToProps)(CadastroAssunto);

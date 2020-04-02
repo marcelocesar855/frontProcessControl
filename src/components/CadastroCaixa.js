@@ -1,7 +1,9 @@
+
+import { connect } from 'react-redux';
 import React, {useState} from 'react';
 import { Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Card, CardTitle, CardBody, Button, Row, Col } from 'reactstrap';
 
-const CadastroCaixa = () => {
+const CadastroCaixa = (props) => {
 
     const [dropdownOpenSetor, setOpenSetor] = useState(false)
     const toggleSetor = () => setOpenSetor(!dropdownOpenSetor)
@@ -56,9 +58,11 @@ const CadastroCaixa = () => {
                                     {labelSetor}
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem onClick={changeSetor}>SUBLA</DropdownItem>
-                                    <DropdownItem>SUBLA</DropdownItem>
-                                    <DropdownItem>SUBLA</DropdownItem>
+                                    {props.setores.map(setor => {
+                                        return(
+                                            <DropdownItem key={setor.id} disabled={setor.id === 0 ? true : false} onClick={changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
+                                        )
+                                    })}
                                 </DropdownMenu>
                             </ButtonDropdown>
                         </Col>
@@ -73,4 +77,8 @@ const CadastroCaixa = () => {
     )
 }
 
-export default CadastroCaixa;
+const mapStateToProps = state => ({
+    setores: state.setores
+  });
+
+export default connect(mapStateToProps)(CadastroCaixa);

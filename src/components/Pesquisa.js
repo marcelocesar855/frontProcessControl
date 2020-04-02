@@ -2,20 +2,16 @@ import React, {Component} from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as processosActions from '../actions/processos';
+import * as setoresActions from '../actions/setores';
+import * as assuntosActions from '../actions/assuntos';
 import Tabela from './Tabela'
 import Api from '../services/Api'
-import { toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css';
+import * as toast from '../utils/toasts'
 import { InputGroup, Input, InputGroupAddon, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Row } from 'reactstrap';
 
 class Pesquisa extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     state = {
-        setores : [],
-        assuntos : [],
         dropdownOpenSetor : false,
         dropdownOpenAssunto : false,
         labelSetor : {sigla : 'Setor', id : null},
@@ -30,12 +26,18 @@ class Pesquisa extends Component {
             console.log(erro)
         })
         await Api.get('assuntos/').then( response => {
-            this.setState({assuntos : response.data})
+            this.props.searchAssunto(response.data)
+            if (this.props.assuntos.length <= 0){
+                this.props.searchAssunto([{descricao : 'Sem assuntos cadastrados', id : 0}])
+            }
         }).catch(erro => {
             console.log(erro)
         })
         await Api.get('setores/').then( response => {
-            this.setState({setores : response.data})
+           this.props.searchSetor(response.data)
+           if (this.props.setores.length <= 0){
+            this.props.searchSetor([{sigla : 'Sem setores cadastrados', id : 0}])
+        }
         }).catch(erro => {
             console.log(erro)
         })
@@ -70,13 +72,12 @@ class Pesquisa extends Component {
     }
 
     search = async () => {
-        toast.configure()
         const {numero} = this.state
         const setorId = this.state.labelSetor.id
         const assuntoId = this.state.labelAssunto.id
         await Api.post('processos-params/', {numero,setorId,assuntoId}).then( response => {
-            this.setState({processos : response.data})
-            if (this.state.processos.length <= 0){
+            this.props.searchProcesso(response.data)
+            if (this.props.processos.length <= 0){
                 toast.info("Nenhum processo encontrado com os filtros informados",{
                     position: "top-right",
                     autoClose: 5000,
@@ -100,9 +101,9 @@ class Pesquisa extends Component {
                             {this.state.labelSetor.sigla}
                         </DropdownToggle>
                         <DropdownMenu>
-                            {this.state.setores.map(setor => {
+                            {this.props.setores.map(setor => {
                                 return(
-                                    <DropdownItem key={setor.id} onClick={this.changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
+                                    <DropdownItem key={setor.id} disabled={setor.id === 0 ? true : false} onClick={this.changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
                                 )
                             })}
                         </DropdownMenu>
@@ -112,9 +113,9 @@ class Pesquisa extends Component {
                             {this.state.labelAssunto.descricao}
                         </DropdownToggle>
                         <DropdownMenu>
-                            {this.state.assuntos.map(assunto => {
+                            {this.props.assuntos.map(assunto => {
                                 return(
-                                    <DropdownItem key={assunto.id} onClick={this.changeAssunto} value={assunto.id}>{assunto.descricao}</DropdownItem>
+                                    <DropdownItem key={assunto.id} disabled={assunto.id === 0 ? true : false} onClick={this.changeAssunto} value={assunto.id}>{assunto.descricao}</DropdownItem>
                                 )
                             })}
                         </DropdownMenu>
@@ -134,9 +135,11 @@ class Pesquisa extends Component {
 
 const mapStateToProps = state => ({
     processos: state.processos,
+    setores: state.setores,
+    assuntos: state.assuntos
   });
   
   const mapDispatchToProps = dispatch =>
-    bindActionCreators(processosActions, dispatch);
+    bindActionCreators(Object.assign({}, processosActions, setoresActions, assuntosActions), dispatch);
   
   export default connect(mapStateToProps, mapDispatchToProps)(Pesquisa);

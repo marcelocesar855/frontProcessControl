@@ -25,7 +25,7 @@ class Tabela extends Component {
       this.setState({currentPage : this.state.currentPage + 1});
   }
 
-  render(){console.log('Render: ', this.props.processos)
+  render(){
     return (
       <React.Fragment>
         <Table striped bordered dark hover>
@@ -61,7 +61,7 @@ class Tabela extends Component {
             </tbody>
         </Table>
         <Paginacao
-          pagesCount={Math.round((this.props.processos.length / 10) + 0.4)}
+          pagesCount={Math.round((this.props.processos.length / 10) + 0.49)}
           currentPage={this.state.currentPage}
           handlePageClick={this.handlePageClick}
           handlePreviousClick={this.handlePreviousClick}
