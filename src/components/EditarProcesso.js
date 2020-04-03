@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {Component} from 'react';
 import { Card, CardBody, CardTitle, InputGroup, Input, InputGroupAddon, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Row } from 'reactstrap';
 import TabelaProcesso from './TabelaProcesso'
 import * as toast from '../utils/toasts'
@@ -7,45 +7,58 @@ import * as processosActions from '../actions/processos';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-const EditarProcesso = (props) => {
+class EditarProcesso extends Component {
 
-    var processos = []
-
-    const setProcessos = (processo) => {
-        processos = processo
+    state = {
+        processos : [],
+        hidden : true,
+        numero : '',
+        dropdownOpenSetor : false,
+        dropdownOpenAssunto : false,
+        labelSetor : {sigla : 'Setor', id : 0},
+        labelAssunto : {descricao : 'Assunto', id : 0}
     }
 
-    const [hidden, setHidden] = useState(true)
-    const hiddenTabela = () => setHidden(!hidden)
+    hiddenTabela = () => this.setState({hidden : !this.state.hidden})
 
-    const [dropdownOpenSetor, setOpenSetor] = useState(false)
-    const toggleSetor = () => setOpenSetor(!dropdownOpenSetor)
+    toggleSetor = () => this.setState({dropdownOpenSetor : !this.state.dropdownOpenSetor})
     
-    const [dropdownOpenAssunto, setOpenAssunto] = useState(false)
-    const toggleAssunto = () => setOpenAssunto(!dropdownOpenAssunto)
+    toggleAssunto = () => this.setState({dropdownOpenAssunto : !this.state.dropdownOpenAssunto})
 
-    const [labelSetor, setLabelSetor] = useState({sigla : 'Setor', id : 0})
-    const changeSetor = (e) => setLabelSetor(e.target.textContent)
+    changeSetor = (e) => {
+        this.setState({
+            labelSetor : {
+                sigla : e.target.textContent,
+                id : e.target.value
+            }  
+        })
+    }
     
-    const [labelAssunto, setLabelAssunto] = useState({descricao : 'Assunto', id : 0})
-    const changeAssunto = (e) => setLabelAssunto(e.target.textContent)
+    changeAssunto = (e) => this.setState({
+        labelAssunto : {
+            descricao : e.target.textContent,
+            id : e.target.value
+        } 
+    })
+    
+    changenumero = (e) => this.setState({numero : e.target.value})
 
-    const [numero, setNumero] = useState('')
-    const changenumero = (e) => setNumero(e.target.value)
 
-
-    const cleanFilters = () => {
-        setLabelSetor('Setor')
-        setLabelAssunto('Assunto')
-        setNumero('')
+    cleanFilters = () => {
+        this.setState({
+            labelSetor : {sigla : 'Setor', id : 0},
+            labelAssunto : {descricao : 'Assunto', id : 0},
+            numero : ''
+        })
     }
 
-    const buscarProcessos = async () => {
-        const setorId = labelSetor.id
-        const assuntoId = labelAssunto.id
+    buscarProcessos = async () => {
+        const {numero} = this.state
+        const setorId = this.state.labelSetor.id
+        const assuntoId = this.state.labelAssunto.id
         await Api.post('processos-params/', {numero,setorId,assuntoId}).then( response => {
-            setProcessos(response.data)
-            if (processos.length <= 0){
+            this.setState({processos : response.data})
+            if (this.state.processos.length <= 0){
                 toast.info("Nenhum processo encontrado com os filtros informados",{
                     position: "top-right",
                     autoClose: 5000,
@@ -54,57 +67,59 @@ const EditarProcesso = (props) => {
                     pauseOnHover: true
                 })
             }
-            if (processos.length !== 0 && hidden) {
-                hiddenTabela()
-            }else if (processos.length === 0 && hidden === false){
-                hiddenTabela()
+            if (this.state.processos.length !== 0 && this.state.hidden) {
+                this.hiddenTabela()
+            }else if (this.state.processos.length === 0 && this.state.hidden === false){
+                this.hiddenTabela()
             }
         }).catch(erro => {
             console.log(erro)
         })
     }
 
-    return (
-        <div>
-            <Card className="p-3">
-                <CardTitle><h3>Editar processos</h3></CardTitle>
-                <CardBody>
-                <Row className="pb-3 w-75">
-                    <InputGroup>
-                        <Input className='rounded-left' placeholder='Número do processo' value={numero} onChange={changenumero}/>
-                        <InputGroupAddon addonType="append"><Button className='rounded-right' onClick={buscarProcessos}>Buscar</Button></InputGroupAddon>
-                        <ButtonDropdown className='ml-3' isOpen={dropdownOpenSetor} toggle={toggleSetor}>
-                            <DropdownToggle caret>
-                                {labelSetor.sigla}
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                {props.setores.map(setor => {
-                                    return(
-                                        <DropdownItem key={setor.id} disabled={setor.id === 0 ? true : false} onClick={changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
-                                    )
-                                })}
-                            </DropdownMenu>
-                        </ButtonDropdown>
-                        <ButtonDropdown className='ml-3' isOpen={dropdownOpenAssunto} toggle={toggleAssunto}>
-                            <DropdownToggle caret>
-                                {labelAssunto.descricao}
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                {props.assuntos.map(assunto => {
-                                    return(
-                                        <DropdownItem key={assunto.id} disabled={assunto.id === 0 ? true : false} onClick={changeAssunto} value={assunto.id}>{assunto.descricao}</DropdownItem>
-                                    )
-                                })}
-                            </DropdownMenu>
-                        </ButtonDropdown>
-                        <Button className='ml-3' outline onClick={cleanFilters}>Limpar filtros</Button>
-                    </InputGroup>
-                </Row>
-                </CardBody>
-                <TabelaProcesso processosEdit={processos} hidden={hidden}/>
-            </Card>
-        </div>
-    )
+    render() {
+        return (
+            <div>
+                <Card className="p-3">
+                    <CardTitle><h3>Editar processos</h3></CardTitle>
+                    <CardBody>
+                    <Row className="pb-3 w-75">
+                        <InputGroup>
+                            <Input className='rounded-left' placeholder='Número do processo' value={this.state.numero} onChange={this.changenumero}/>
+                            <InputGroupAddon addonType="append"><Button className='rounded-right' onClick={this.buscarProcessos}>Buscar</Button></InputGroupAddon>
+                            <ButtonDropdown className='ml-3' isOpen={this.state.dropdownOpenSetor} toggle={this.toggleSetor}>
+                                <DropdownToggle caret>
+                                    {this.state.labelSetor.sigla}
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    {this.props.setores.map(setor => {
+                                        return(
+                                            <DropdownItem key={setor.id} disabled={setor.id === 0 ? true : false} onClick={this.changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
+                                        )
+                                    })}
+                                </DropdownMenu>
+                            </ButtonDropdown>
+                            <ButtonDropdown className='ml-3' isOpen={this.state.dropdownOpenAssunto} toggle={this.toggleAssunto}>
+                                <DropdownToggle caret>
+                                    {this.state.labelAssunto.descricao}
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    {this.props.assuntos.map(assunto => {
+                                        return(
+                                            <DropdownItem key={assunto.id} disabled={assunto.id === 0 ? true : false} onClick={this.changeAssunto} value={assunto.id}>{assunto.descricao}</DropdownItem>
+                                        )
+                                    })}
+                                </DropdownMenu>
+                            </ButtonDropdown>
+                            <Button className='ml-3' outline onClick={this.cleanFilters}>Limpar filtros</Button>
+                        </InputGroup>
+                    </Row>
+                    </CardBody>
+                    <TabelaProcesso processosEdit={this.state.processos} hidden={this.state.hidden}/>
+                </Card>
+            </div>
+        )
+    }
 }
 
 const mapStateToProps = state => ({
