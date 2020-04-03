@@ -106,29 +106,29 @@ class TabelaProcesso extends Component {
 
   updateProcesso = () => {
     const { numero, data, id } = this.state.selected;
-        const caixaId = this.state.selected.caixa.id
-        const assuntoId = this.state.selected.assunto.id
-        if (numero !== '') {
-            if(data !== ''){
-                if (caixaId !== 0 ) {
-                    if (assuntoId !== 0) {
-                        Api.put(`processo/${id}`, {numero, data ,caixaId, assuntoId}).then( response => {
-                            toast.sucesso("Processo atualizado com sucesso")
-                        }).catch( () => {
-                            toast.erro("Erro ao atualizar o processo")
-                        })
-                    }else {
-                        toast.erro("Informe o assunto do processo")
-                    }
-                }else {
-                    toast.erro("Informe a caixa do processo")
-                }
-            }else {
-                toast.erro("Informe a data de autuação do processo")
-            }
-        }else {
-            toast.erro("Informe o número do processo")
-        }
+      const caixaId = this.state.selected.caixa.id
+      const assuntoId = this.state.selected.assunto.id
+      if (numero !== '') {
+          if(data !== ''){
+              if (caixaId !== 0 ) {
+                  if (assuntoId !== 0) {
+                      Api.put(`processo/${id}`, {numero, data ,caixaId, assuntoId}).then( response => {
+                          toast.sucesso("Processo atualizado com sucesso")
+                      }).catch( () => {
+                          toast.erro("Erro ao atualizar o processo")
+                      })
+                  }else {
+                      toast.erro("Informe o assunto do processo")
+                  }
+              }else {
+                  toast.erro("Informe a caixa do processo")
+              }
+          }else {
+              toast.erro("Informe a data de autuação do processo")
+          }
+      }else {
+          toast.erro("Informe o número do processo")
+      }
   }
 
   deleteProcesso = () => {
@@ -175,7 +175,7 @@ class TabelaProcesso extends Component {
             </tbody>
         </Table>
         <Paginacao hidden={this.props.hidden}
-          pageSize={10}
+          currentPage={this.state.currentPage}
           pagesCount={Math.round((this.props.processosEdit.length / 10) + 0.5)}
           handlePageClick={this.handlePageClick}
           handlePreviousClick={this.handlePreviousClick}

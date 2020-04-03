@@ -1,47 +1,92 @@
-import React, {useState} from 'react';
+import React, {Component} from 'react';
 import {Col, Row, Modal, ModalHeader, ModalBody, ModalFooter, Table, Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Button } from 'reactstrap';
 import Paginacao from './Paginacao';
+import Api from '../services/Api'
+import * as assuntosActions from '../actions/assuntos';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as toast from '../utils/toasts'
 
-const TabelaCaixas = ({
-  caixas,
-  hidden,
-  currentPage,
-  pageSize,
-  pagesCount,
-  handlePageClick,
-  handlePreviousClick,
-  handleNextClick
-}) => {
-  const [selected, setSelected] = useState({numero : '', estante : '', prateleira : '', setor : ''})
+class TabelaCaixas extends Component {
 
-  const [showModalEdit, setShowModalEdit] = useState()
-  const toggleEdit = () => setShowModalEdit(!showModalEdit)
+  state = {
+    currentPage : 0,
+    selected : {numero : '', estante : '', prateleira : '', setor : {sigla: 'Setor', id : 0}},
+    dropdownOpenSetor : false,
+    showModalEdit: false,
+    showModalDel: false
+  }
 
-  const [showModalDel, setShowModalDel] = useState()
-  const toggleDel = () => setShowModalDel(!showModalDel)
+   handlePageClick = (e, index) => {
+    e.preventDefault();
+    this.setState({currentPage: index});
+  };
 
-  const [dropdownOpenSetor, setOpenSetor] = useState(false)
-  const toggleSetor = () => setOpenSetor(!dropdownOpenSetor)
+  handlePreviousClick = (e) => {
+    e.preventDefault();
+    this.setState({currentPage: this.state.currentPage - 1});
+  }
 
-  const changeSetor = (e) => setSelected({...selected, setor : e.target.textContent})
-  
-  const changeNumero = (e) => setSelected({...selected, numero : e.target.value})
+  handleNextClick = (e) => {
+    e.preventDefault();
+    this.setState({currentPage: this.state.currentPage + 1});
+  }
 
-  const changeEstante = (e) => setSelected({...selected, estante : e.target.value})
+  toggleEdit = () => this.setState({showModalEdit: !this.state.showModalEdit})
 
-  const changePrateleira = (e) => setSelected({...selected, prateleira : e.target.value})
+  toggleDel = () => this.setState({showModalDel: !this.state.showModalDel})
 
-  const updateCaixa = () => {
+  toggleSetor = () => this.setState({dropdownOpenSetor : !this.state.dropdownOpenSetor})
+
+  changeNumero = (e) => this.setState({selected: {...this.state.selected, numero : e.target.value}})
+    
+  changeEstante = (e) => this.setState({selected: {...this.state.selected, estante : e.target.value}})
+
+  changePrateleira = (e) => this.setState({selected: {...this.state.selected, prateleira : e.target.value}})
+
+  changeSetor = (e) => this.setState({
+    selected : {...this.state.selected,
+      setor : {
+          sigla : e.target.textContent,
+          id : e.target.value
+        }
+      }  
+    })
+
+  updateCaixa = () => {
+    const { numero, prateleira, estante, id } = this.state.selected;
+    const setorId = this.state.selected.setor.id
+    if (numero !== '') {
+        if(prateleira !== ''){
+            if (estante !== 0 ) {
+                if (setorId !== 0) {
+                    Api.put(`caixa/${id}`, {numero, prateleira, estante, setorId}).then( response => {
+                        toast.sucesso("Caixa atualizada com sucesso")
+                    }).catch( () => {
+                        toast.erro("Erro ao atualizar a caixa")
+                    })
+                }else {
+                    toast.erro("Informe o setor da caixa")
+                }
+            }else {
+                toast.erro("Informe a estante da caixa")
+            }
+        }else {
+            toast.erro("Informe a prateleira da caixa")
+        }
+    }else {
+        toast.erro("Informe o número da caixa")
+    }
+  }
+
+  deleteCaixa = () => {
       
   }
 
-  const deleteCaixa = () => {
-      
-  }
-
+  render() {
     return (
       <div>
-        <Table striped bordered dark hover hidden={hidden}>
+        <Table striped bordered dark hover hidden={this.props.hidden}>
             <thead>
                 <tr>
                   <th>Número</th>
@@ -52,19 +97,19 @@ const TabelaCaixas = ({
                 </tr>
             </thead>
             <tbody>
-            {caixas
-              .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
+            {this.props.caixas
+              .slice(this.state.currentPage * 10, (this.state.currentPage + 1) * 10)
               .map(caixa => {
                 return (
                   <React.Fragment key={caixa.id}>
                     <tr>
                       <td>{caixa.numero}</td>
-                      <td>{caixa.setor}</td>
+                      <td>{caixa.setor.sigla}</td>
                       <td>{caixa.estante}</td>
                       <td>{caixa.prateleira}</td>
                       <td>
-                        <Button onClick={() => {setSelected(caixa); toggleEdit()}}>Editar</Button>
-                        <Button className='ml-3' onClick={() => {setSelected(caixa); toggleDel()}}>Excluir</Button>
+                        <Button onClick={() => {this.setState({selected : caixa}); this.toggleEdit()}}>Editar</Button>
+                        {/*<Button className='ml-3' onClick={() => {this.setState({selected : caixa}); this.toggleDel()}}>Excluir</Button>*/}
                       </td>
                     </tr>
                   </React.Fragment>
@@ -72,42 +117,44 @@ const TabelaCaixas = ({
               })}
             </tbody>
         </Table>
-        <Paginacao hidden={hidden}
-          pagesCount={pagesCount}
-          currentPage={currentPage}
-          handlePageClick={handlePageClick}
-          handlePreviousClick={handlePreviousClick}
-          handleNextClick={handleNextClick}
+        <Paginacao hidden={this.props.hidden}
+          pagesCount={Math.round((this.props.caixas.length / 10) + 0.5)}
+          currentPage={this.state.currentPage}
+          handlePageClick={this.handlePageClick}
+          handlePreviousClick={this.handlePreviousClick}
+          handleNextClick={this.handleNextClick}
         />
-        <Modal isOpen={showModalEdit} toggle={toggleEdit}>
-            <ModalHeader toggle={toggleEdit}>Editar caixa</ModalHeader>
+        <Modal isOpen={this.state.showModalEdit} toggle={this.toggleEdit}>
+            <ModalHeader toggle={this.toggleEdit}>Editar caixa</ModalHeader>
             <ModalBody>
                 <Form>
                     <FormGroup>
                         <Row form>
                         <Col>
                             <Label for="numero">Número da caixa</Label>
-                            <Input value={selected.numero} id="numero" className='w-50' onChange={changeNumero}/>
+                            <Input value={this.state.selected.numero} id="numero" className='w-50' onChange={this.changeNumero}/>
                         </Col>
                         <Col>
                             <Label for="estante">Estante</Label>
-                            <Input value={selected.estante} id="estante" className='w-50' onChange={changeEstante}/>
+                            <Input value={this.state.selected.estante} id="estante" className='w-50' onChange={this.changeEstante}/>
                         </Col>
                     </Row>
                     <Row form>
                         <Col>
                             <Label for="prateleira">Prateleira</Label>
-                            <Input value={selected.prateleira} id="prateleira" className='w-50' onChange={changePrateleira}/>
+                            <Input value={this.state.selected.prateleira} id="prateleira" className='w-50' onChange={this.changePrateleira}/>
                         </Col>
                         <Col>
-                            <ButtonDropdown isOpen={dropdownOpenSetor} toggle={toggleSetor}  className="pt-4">
+                            <ButtonDropdown isOpen={this.state.dropdownOpenSetor} toggle={this.toggleSetor}  className="pt-4">
                                 <DropdownToggle caret>
-                                    {selected.setor}
+                                    {this.state.selected.setor.sigla}
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem onClick={changeSetor}>SUBLA</DropdownItem>
-                                    <DropdownItem>SUBLA</DropdownItem>
-                                    <DropdownItem>SUBLA</DropdownItem>
+                                  {this.props.setores.map(setor => {
+                                    return(
+                                      <DropdownItem key={setor.id} disabled={setor.id === 0 ? true : false} onClick={this.changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
+                                    )
+                                  })}
                                 </DropdownMenu>
                             </ButtonDropdown>
                         </Col>
@@ -116,23 +163,31 @@ const TabelaCaixas = ({
                 </Form>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={() => {updateCaixa(); toggleEdit()}}>Salvar</Button>
-                <Button className='ml-3' color="secondary" onClick={toggleEdit}>Cancelar</Button>
+                <Button color="primary" onClick={() => {this.updateCaixa(); this.toggleEdit()}}>Salvar</Button>
+                <Button className='ml-3' color="secondary" onClick={this.toggleEdit}>Cancelar</Button>
             </ModalFooter>
         </Modal>
-        <Modal isOpen={showModalDel} toggle={toggleDel}>
-            <ModalHeader toggle={toggleDel}>Excluir caixa</ModalHeader>
+        <Modal isOpen={this.state.showModalDel} toggle={this.toggleDel}>
+            <ModalHeader toggle={this.toggleDel}>Excluir caixa</ModalHeader>
             <ModalBody>
-            <p className=" text-center">Você tem certeza que deseja excluir a caixa<br/>nº <span className='font-weight-bold'>{selected.numero}</span>
-            , pertencente ao setor <span className='font-weight-bold'>{selected.setor}</span>?</p>
+            <p className=" text-center">Você tem certeza que deseja excluir a caixa<br/>nº <span className='font-weight-bold'>{this.state.selected.numero}</span>
+            , pertencente ao setor <span className='font-weight-bold'>{this.state.selected.setor.sigla}</span>?</p>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={() => {deleteCaixa(); toggleDel()}}>Sim, exclua</Button>
-                <Button className='ml-3' color="secondary" onClick={toggleDel}>Cancelar</Button>
+                <Button color="primary" onClick={() => {this.deleteCaixa(); this.toggleDel()}}>Sim, exclua</Button>
+                <Button className='ml-3' color="secondary" onClick={this.toggleDel}>Cancelar</Button>
             </ModalFooter>
         </Modal>
       </div>
-  )
+    )
+  }
 }
 
-export default TabelaCaixas;
+const mapStateToProps = state => ({
+  setores: state.setores
+});
+
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(assuntosActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(TabelaCaixas);

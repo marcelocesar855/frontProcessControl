@@ -1,40 +1,73 @@
-import React, {useState} from 'react';
+import React, {Component} from 'react';
 import {Modal, ModalHeader, ModalBody, ModalFooter, Table, Form, FormGroup, Input, Label, Button } from 'reactstrap';
 import Paginacao from './Paginacao';
+import Api from '../services/Api'
+import * as setoresActions from '../actions/setores';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as toast from '../utils/toasts'
 
-const TabelaSetor = ({
-  setores,
-  hidden,
-  currentPage,
-  pageSize,
-  pagesCount,
-  handlePageClick,
-  handlePreviousClick,
-  handleNextClick
-}) => {
-  const [selected, setSelected] = useState({nome : '', sigla : ''})
+class TabelaSetor extends Component {
 
-  const [showModalEdit, setShowModalEdit] = useState()
-  const toggleEdit = () => setShowModalEdit(!showModalEdit)
+  state = {
+    currentPage : 0,
+    selected : {nome : '', sigla : ''},
+    showModalEdit: false,
+    showModalDel: false
+  }
 
-  const [showModalDel, setShowModalDel] = useState()
-  const toggleDel = () => setShowModalDel(!showModalDel)
+  handlePageClick = (e, index) => {
+    e.preventDefault();
+    this.setState({currentPage: index});
+  };
 
-  const changeNome = (e) => setSelected({...selected, nome : e.target.value})
+  handlePreviousClick = (e) => {
+    e.preventDefault();
+    this.setState({currentPage: this.state.currentPage - 1});
+  }
+
+  handleNextClick = (e) => {
+    e.preventDefault();
+    this.setState({currentPage: this.state.currentPage + 1});
+  }
+
+  toggleEdit = () => this.setState({showModalEdit: !this.state.showModalEdit})
+
+  toggleDel = () => this.setState({showModalDel: !this.state.showModalDel})
+
+  changeNome = (e) => this.setState({selected: {...this.state.selected, nome : e.target.value}})
     
-  const changeSigla = (e) => setSelected({...selected, sigla : e.target.value})
+  changeSigla = (e) => this.setState({selected: {...this.state.selected, sigla : e.target.value}})
 
-  const updateSetor = () => {
-      
+  updateSetor = () => {
+    const { nome, sigla, id } = this.state.selected;
+    if (nome !== '') {
+        if(sigla !== ''){
+          Api.put(`setor/${id}`, {nome, sigla}).then( response => {
+              toast.sucesso("Setor atualizado com sucesso")
+          }).catch( () => {
+              toast.erro("Erro ao atualizar o setor")
+          })
+        }else {
+            toast.erro("Informe a sigla do setor")
+        }
+    }else {
+        toast.erro("Informe o nome do setor")
+    }
   }
 
-  const deleteSetor = () => {
-      
+  deleteSetor = () => {
+    const { id } = this.state.selected;
+    Api.delete(`setor/${id}`).then( response => {
+        toast.sucesso("Processo excluído com sucesso")
+    }).catch( () => {
+        toast.erro("Erro ao excluir o processo")
+    })
   }
-
+  render() {
     return (
       <div>
-        <Table striped bordered dark hover hidden={hidden}>
+        <Table striped bordered dark hover hidden={this.props.hidden}>
             <thead>
                 <tr>
                   <th>Nome</th>
@@ -43,8 +76,8 @@ const TabelaSetor = ({
                 </tr>
             </thead>
             <tbody>
-            {setores
-              .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
+            {this.props.setoresEdit
+              .slice(this.state.currentPage * 10, (this.state.currentPage + 1) * 10)
               .map(setor => {
                 return (
                   <React.Fragment key={setor.id}>
@@ -52,8 +85,8 @@ const TabelaSetor = ({
                     <td>{setor.nome}</td>
                     <td>{setor.sigla}</td>
                     <td>
-                      <Button onClick={() => {setSelected(setor); toggleEdit()}}>Editar</Button>
-                      <Button className='ml-3' onClick={() => {setSelected(setor); toggleDel()}}>Excluir</Button>
+                      <Button onClick={() => {this.setState({selected : setor}); this.toggleEdit()}}>Editar</Button>
+                      {/*<Button className='ml-3' onClick={() => {this.setState({selected : setor}); this.toggleDel()}}>Excluir</Button>*/}
                     </td>
                   </tr>
                   </React.Fragment>
@@ -61,42 +94,49 @@ const TabelaSetor = ({
               })}
             </tbody>
         </Table>
-        <Paginacao hidden={hidden}
-          pagesCount={pagesCount}
-          currentPage={currentPage}
-          handlePageClick={handlePageClick}
-          handlePreviousClick={handlePreviousClick}
-          handleNextClick={handleNextClick}
+        <Paginacao hidden={this.props.hidden}
+          pagesCount={Math.round((this.props.setoresEdit.length / 10) + 0.5)}
+          currentPage={this.state.currentPage}
+          handlePageClick={this.handlePageClick}
+          handlePreviousClick={this.handlePreviousClick}
+          handleNextClick={this.handleNextClick}
         />
-        <Modal isOpen={showModalEdit} toggle={toggleEdit}>
-            <ModalHeader toggle={toggleEdit}>Editar setor</ModalHeader>
+        <Modal isOpen={this.state.showModalEdit} toggle={this.toggleEdit}>
+            <ModalHeader toggle={this.toggleEdit}>Editar setor</ModalHeader>
             <ModalBody>
                 <Form>
                     <FormGroup>
                         <Label for="nome">Nome do setor</Label>
-                        <Input value={selected.nome} id="nome" onChange={changeNome}/>
+                        <Input value={this.state.selected.nome} id="nome" onChange={this.changeNome}/>
                         <Label for="sigla">Sigla</Label>
-                        <Input value={selected.sigla} id="sigla" className='w-50' onChange={changeSigla}/>
+                        <Input value={this.state.selected.sigla} id="sigla" className='w-50' onChange={this.changeSigla}/>
                     </FormGroup>
                 </Form>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={() => {updateSetor(); toggleEdit()}}>Salvar</Button>
-                <Button className='ml-3' color="secondary" onClick={toggleEdit}>Cancelar</Button>
+                <Button color="primary" onClick={() => {this.updateSetor(); this.toggleEdit()}}>Salvar</Button>
+                <Button className='ml-3' color="secondary" onClick={this.toggleEdit}>Cancelar</Button>
             </ModalFooter>
         </Modal>
-        <Modal isOpen={showModalDel} toggle={toggleDel}>
-            <ModalHeader toggle={toggleDel}>Excluir setor</ModalHeader>
+        <Modal isOpen={this.state.showModalDel} toggle={this.toggleDel}>
+            <ModalHeader toggle={this.toggleDel}>Excluir setor</ModalHeader>
             <ModalBody>
-            <p className=" text-center">Você tem certeza que deseja excluir o setor <span className='font-weight-bold'>{selected.nome} ({selected.sigla})</span>?</p>
+            <p className=" text-center">Você tem certeza que deseja excluir o setor <span className='font-weight-bold'>{this.state.selected.nome} ({this.state.selected.sigla})</span>?</p>
             </ModalBody>
             <ModalFooter>
-                <Button color="primary" onClick={() => {deleteSetor(); toggleDel()}}>Sim, exclua</Button>
-                <Button className='ml-3' color="secondary" onClick={toggleDel}>Cancelar</Button>
+                <Button color="primary" onClick={() => {this.deleteSetor(); this.toggleDel()}}>Sim, exclua</Button>
+                <Button className='ml-3' color="secondary" onClick={this.toggleDel}>Cancelar</Button>
             </ModalFooter>
         </Modal>
       </div>
-  )
+  )}
 }
 
-export default TabelaSetor;
+const mapStateToProps = state => ({
+  setores: state.setores
+});
+
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(setoresActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(TabelaSetor);

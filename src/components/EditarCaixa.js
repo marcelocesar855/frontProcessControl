@@ -1,96 +1,109 @@
-import React, {useState} from 'react';
+import React, {Component} from 'react';
 import { Card, CardBody, CardTitle, InputGroup, Input, InputGroupAddon, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Row } from 'reactstrap';
 import TabelaCaixas from './TabelaCaixas'
+import * as toast from '../utils/toasts'
+import Api from '../services/Api'
+import * as assuntosActions from '../actions/assuntos';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-const EditarCaixa = () => {
+class EditarCaixa extends Component {
 
-    const caixas = [{numero : '12', estante : '2', prateleira : '5', setor : 'SUBLA'},{numero : '12', estante : '2', prateleira : '5', setor : 'SUBLA'},
-    {numero : '12', estante : '2', prateleira : '5', setor : 'SUBLA'},{numero : '12', estante : '2', prateleira : '5', setor : 'SUBLA'},
-    {numero : '12', estante : '2', prateleira : '5', setor : 'SUBLA'},{numero : '12', estante : '2', prateleira : '5', setor : 'SUBLA'}];
-
-    const [hidden, setHidden] = useState(true)
-    const hiddenTabela = () => setHidden(!hidden)
-
-    const [currentPage, setCurrentPage] = useState(0);
-
-    const handlePageClick = (e, index) => {
-        e.preventDefault();
-        setCurrentPage(index);
-    };
-
-    const handlePreviousClick = (e) => {
-        e.preventDefault();
-        setCurrentPage(currentPage - 1);
+    state = {
+        caixas : [],
+        hidden : true,
+        numero : '',
+        prateleira : '',
+        estante : '',
+        dropdownOpenSetor : false,
+        labelSetor : {sigla : 'Setor', id : 0}
     }
 
-    const handleNextClick = (e) => {
-        e.preventDefault();
-        setCurrentPage(currentPage + 1);
-    }
+    hiddenTabela = () => this.setState({hidden : !this.state.hidden})
 
-    const [dropdownOpenSetor, setOpenSetor] = useState(false)
-    const toggleSetor = () => setOpenSetor(!dropdownOpenSetor)
-
-    const [labelSetor, setLabelSetor] = useState('Setor')
-    const changeSetor = (e) => setLabelSetor(e.target.textContent)
-
-    const [numero, setNumero] = useState('')
-    const changeNumero = (e) => setNumero(e.target.value)
+    toggleSetor = () => this.setState({dropdownOpenSetor : !this.state.dropdownOpenSetor})
     
-    const [estante, setEstante] = useState('')
-    const changeEstante = (e) => setEstante(e.target.value)
-    
-    const [prateleira, setPrateleira] = useState('')
-    const changePrateleira = (e) => setPrateleira(e.target.value)
-
-    const cleanFilters = () => {
-        setLabelSetor('Setor')
-        setNumero('')
-        setEstante('')
-        setPrateleira('')
+    changeSetor = (e) => {
+        this.setState({
+            labelSetor : {
+                sigla : e.target.textContent,
+                id : e.target.value
+            }  
+        })
     }
 
-    const buscarCaixa = () => {
-        if (caixas.length !== 0) {
-            hiddenTabela()
+    changeNumero = (e) => this.setState({numero : e.target.value})
+
+    changeEstante = (e) => this.setState({estante : e.target.value})
+
+    changePrateleira = (e) => this.setState({prateleira : e.target.value})
+
+
+    cleanFilters = () => {
+        this.setState({
+            labelSetor : {sigla : 'Setor', id : 0},
+            numero : '',
+            prateleira : '',
+            estante : ''
+        })
+    }
+
+    buscarCaixa = async () => {
+        const {numero,estante,prateleira} = this.state
+        const setorId = this.state.labelSetor.id
+        await Api.post('caixa-params/', {numero,estante,prateleira,setorId}).then( response => {
+            this.setState({caixas : response.data})
+            if (this.state.caixas.length <= 0){
+                toast.info("Nenhuma caixa encontrada com os filtros informados")
+            }
+        })
+        if (this.state.caixas.length !== 0 && this.state.hidden) {
+            this.hiddenTabela()
+        }else if (this.state.caixas.length === 0 && this.state.hidden === false){
+            this.hiddenTabela()
         }
     }
 
-    return (
-        <div>
-            <Card className="p-3 mt-3">
-                <CardTitle><h3>Editar caixas</h3></CardTitle>
-                <CardBody>
-                <Row className="pb-3 w-75">
-                    <InputGroup>
-                        <Input className='rounded-left' type='number' placeholder='Número da caixa' value={numero} onChange={changeNumero}/>
-                        <InputGroupAddon addonType="append"><Button className='rounded-right' onClick={buscarCaixa}>Buscar</Button></InputGroupAddon>
-                        <ButtonDropdown className='ml-3' isOpen={dropdownOpenSetor} toggle={toggleSetor}>
-                            <DropdownToggle caret>
-                                {labelSetor}
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                <DropdownItem onClick={changeSetor}>SUBLA</DropdownItem>
-                                <DropdownItem>SUBLA</DropdownItem>
-                                <DropdownItem>SUBLA</DropdownItem>
-                            </DropdownMenu>
-                        </ButtonDropdown>
-                        <Input className='rounded-left ml-3' type='number' placeholder='Estante' value={estante} onChange={changeEstante}/>
-                        <Input className='rounded-right' type='number' placeholder='Prateleira' value={prateleira} onChange={changePrateleira}/>
-                        <Button className='ml-3' outline onClick={cleanFilters}>Limpar filtros</Button>
-                    </InputGroup>
-                </Row>
-                </CardBody>
-                <TabelaCaixas caixas={caixas} hidden={hidden}
-                pageSize={10}
-                pagesCount={Math.round((caixas.length / 10) + 0.5)}
-                currentPage={currentPage}
-                handlePageClick={handlePageClick}
-                handlePreviousClick={handlePreviousClick}
-                handleNextClick={handleNextClick}/>
-            </Card>
-        </div>
-    )
+    render () {
+        return (
+            <div>
+                <Card className="p-3 mt-3">
+                    <CardTitle><h3>Editar caixas</h3></CardTitle>
+                    <CardBody>
+                    <Row className="pb-3 w-75">
+                        <InputGroup>
+                            <Input className='rounded-left' type='number' placeholder='Número da caixa' value={this.state.numero} onChange={this.changeNumero}/>
+                            <InputGroupAddon addonType="append"><Button className='rounded-right' onClick={this.buscarCaixa}>Buscar</Button></InputGroupAddon>
+                            <ButtonDropdown className='ml-3' isOpen={this.state.dropdownOpenSetor} toggle={this.toggleSetor}>
+                                <DropdownToggle caret>
+                                    {this.state.labelSetor.sigla}
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    {this.props.setores.map(setor => {
+                                        return(
+                                            <DropdownItem key={setor.id} disabled={setor.id === 0 ? true : false} onClick={this.changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
+                                        )
+                                    })}
+                                </DropdownMenu>
+                            </ButtonDropdown>
+                            <Input className='rounded-left ml-3' type='number' placeholder='Estante' value={this.state.estante} onChange={this.changeEstante}/>
+                            <Input className='rounded-right' type='number' placeholder='Prateleira' value={this.state.prateleira} onChange={this.changePrateleira}/>
+                            <Button className='ml-3' outline onClick={this.cleanFilters}>Limpar filtros</Button>
+                        </InputGroup>
+                    </Row>
+                    </CardBody>
+                    <TabelaCaixas caixas={this.state.caixas} hidden={this.state.hidden}/>
+                </Card>
+            </div>
+        )
+    }
 }
 
-export default EditarCaixa;
+const mapStateToProps = state => ({
+    setores: state.setores
+});
+
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(assuntosActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditarCaixa);

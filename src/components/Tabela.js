@@ -52,8 +52,8 @@ class Tabela extends Component {
                       <td>{processo.caixa.setor.sigla}</td>
                       <td>{processo.assunto.descricao}</td>
                       <td>{processo.caixa.numero}</td>
-                      <td>{processo.caixa.prateleira}</td>
                       <td>{processo.caixa.estante}</td>
+                      <td>{processo.caixa.prateleira}</td>
                     </tr>
                   </React.Fragment>
                 );

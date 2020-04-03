@@ -1,68 +1,59 @@
-import React, {useState} from 'react';
+import React, {Component} from 'react';
 import { Card, CardBody, CardTitle, InputGroup, Input, InputGroupAddon, Button, Row } from 'reactstrap';
 import TabelaAssunto from './TabelaAssunto'
+import * as toast from '../utils/toasts'
+import Api from '../services/Api'
 
-const EditarAssunto = () => {
+class EditarAssunto extends Component {
 
-    const assuntos = [{descricao : 'Obra de bla bla bla'},{descricao : 'Obra de bla bla bla'},{descricao : 'Obra de bla bla bla'},
-    {descricao : 'Obra de bla bla bla'},{descricao : 'Obra de bla bla bla'},{descricao : 'Obra de bla bla bla'}];
-
-    const [hidden, setHidden] = useState(true)
-    const hiddenTabela = () => setHidden(!hidden)
-
-    const [currentPage, setCurrentPage] = useState(0);
-
-    const handlePageClick = (e, index) => {
-        e.preventDefault();
-        setCurrentPage(index);
-    };
-
-    const handlePreviousClick = (e) => {
-    e.preventDefault();
-    setCurrentPage(currentPage - 1);
+    state = {
+        assuntos : [],
+        hidden : true,
+        descricao: ''
     }
 
-    const handleNextClick = (e) => {
-    e.preventDefault();
-    setCurrentPage(currentPage + 1);
+    hiddenTabela = () => this.setState({hidden : !this.state.hidden})
+
+    changeDescricao = (e) => this.setState({descricao : e.target.value})
+
+    cleanFilters = () => {
+        this.setState({nome :  ''})
     }
 
-    const [descricao, setDescricao] = useState('')
-    const changeDescricao = (e) => setDescricao(e.target.value)
-
-    const cleanFilters = () => {
-        setDescricao('')
-    }
-
-    const buscarAssunto = () => {
-        if (assuntos.length !== 0) {
-            hiddenTabela()
+    buscarAssunto = async () => {
+        const {descricao} = this.state
+        await Api.post('assunto-params/', {descricao}).then( response => {
+            this.setState({assuntos : response.data})
+            if (this.state.assuntos.length <= 0){
+                toast.info("Nenhum assunto encontrado com a descrição informada")
+            }
+        })
+        if (this.state.assuntos.length !== 0 && this.state.hidden) {
+            this.hiddenTabela()
+        }else if (this.state.assuntos.length === 0 && this.state.hidden === false){
+            this.hiddenTabela()
         }
     }
 
-    return (
-        <div>
-            <Card className="p-3 mt-3">
-                <CardTitle><h3>Editar assuntos</h3></CardTitle>
-                <CardBody>
-                <Row className="pb-3">
-                    <InputGroup>
-                        <Input className='rounded-left' placeholder='Assunto ' value={descricao} onChange={changeDescricao}/>
-                        <InputGroupAddon addonType="append"><Button className='rounded-right' onClick={buscarAssunto}>Buscar</Button></InputGroupAddon>
-                        <Button className='ml-3' outline onClick={cleanFilters}>Limpar</Button>
-                    </InputGroup>
-                </Row>
-                </CardBody>
-                <TabelaAssunto assuntos={assuntos} hidden={hidden}
-                pageSize={10}
-                pagesCount={Math.round((assuntos.length / 10) + 0.5)}
-                currentPage={currentPage}
-                handlePageClick={handlePageClick}
-                handlePreviousClick={handlePreviousClick}
-                handleNextClick={handleNextClick}/>
-            </Card>
-        </div>
-    )
+    render () {
+        return (
+            <div>
+                <Card className="p-3 mt-3">
+                    <CardTitle><h3>Editar assuntos</h3></CardTitle>
+                    <CardBody>
+                    <Row className="pb-3">
+                        <InputGroup>
+                            <Input className='rounded-left' placeholder='Assunto' value={this.state.descricao} onChange={this.changeDescricao}/>
+                            <InputGroupAddon addonType="append"><Button className='rounded-right' onClick={this.buscarAssunto}>Buscar</Button></InputGroupAddon>
+                            <Button className='ml-3' outline onClick={this.cleanFilters}>Limpar</Button>
+                        </InputGroup>
+                    </Row>
+                    </CardBody>
+                    <TabelaAssunto assuntosEdit={this.state.assuntos} hidden={this.state.hidden}/>
+                </Card>
+            </div>
+        )
+    }
 }
 
 export default EditarAssunto;
