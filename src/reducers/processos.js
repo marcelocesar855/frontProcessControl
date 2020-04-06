@@ -3,9 +3,11 @@ export default function processos(state = [], action) {
     case 'ADD_PROCESSO':
       return null
     case 'REMOVE_PROCESSO':
-      return null
+      const processos = state.filter(p => action.processo.id !== p.id)
+      return processos
     case 'UPDATE_PROCESSO':
-      return null
+      const processosUp = state.filter(p => action.processo.id !== p.id)
+      return [action.processo].concat(processosUp)
     case 'SEARCH_PROCESSOS':
         return action.processos
     default:

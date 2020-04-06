@@ -18,7 +18,12 @@ class TabelaProcesso extends Component {
     showModalDel: false,
     dropdownOpenSetor : false,
     dropdownOpenAssunto : false,
-    dropdownOpenCaixa : false
+    dropdownOpenCaixa : false,
+    processos : []
+  }
+
+  componentWillReceiveProps() {
+    this.setState({processos : this.props.processosEdit})
   }
 
   handlePageClick = (e, index) => {
@@ -112,8 +117,11 @@ class TabelaProcesso extends Component {
           if(data !== ''){
               if (caixaId !== 0 ) {
                   if (assuntoId !== 0) {
-                      Api.put(`processo/${id}`, {numero, data ,caixaId, assuntoId}).then( response => {
-                          toast.sucesso("Processo atualizado com sucesso")
+                      Api.put(`processo/${id}`, {numero, data ,caixaId, assuntoId}).then( () => {
+                        this.props.updateProcesso(this.state.selected)
+                        const processos = this.state.processos.filter(p => this.state.selected.id !== p.id)
+                        this.setState({processos : [this.state.selected].concat(processos)})
+                        toast.sucesso("Processo atualizado com sucesso")
                       }).catch( () => {
                           toast.erro("Erro ao atualizar o processo")
                       })
@@ -133,7 +141,10 @@ class TabelaProcesso extends Component {
 
   deleteProcesso = () => {
     const { id } = this.state.selected;
-    Api.delete(`processo/${id}`).then( response => {
+    Api.delete(`processo/${id}`).then( () => {
+        this.props.removeProcesso(this.state.selected)
+        const processos = this.state.processos.filter(p => this.state.selected.id !== p.id)
+        this.setState({processos})
         toast.sucesso("Processo excluído com sucesso")
     }).catch( () => {
         toast.erro("Erro ao excluir o processo")
@@ -154,7 +165,7 @@ class TabelaProcesso extends Component {
                 </tr>
             </thead>
             <tbody>
-            {this.props.processosEdit
+            {this.state.processos
               .slice(this.state.currentPage * 10, (this.state.currentPage + 1) * 10)
               .map(processo => {
                 return (
@@ -176,7 +187,7 @@ class TabelaProcesso extends Component {
         </Table>
         <Paginacao hidden={this.props.hidden}
           currentPage={this.state.currentPage}
-          pagesCount={Math.round((this.props.processosEdit.length / 10) + 0.5)}
+          pagesCount={Math.round((this.state.processos.length / 10) + 0.5)}
           handlePageClick={this.handlePageClick}
           handlePreviousClick={this.handlePreviousClick}
           handleNextClick={this.handleNextClick}

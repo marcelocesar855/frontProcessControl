@@ -13,7 +13,12 @@ class TabelaAssunto extends Component {
     currentPage : 0,
     selected : {descricao : ''},
     showModalEdit: false,
-    showModalDel: false
+    showModalDel: false,
+    assuntos : []
+  }
+
+  componentWillReceiveProps() {
+    this.setState({assuntos : this.props.assuntosEdit})
   }
 
   handlePageClick = (e, index) => {
@@ -40,7 +45,10 @@ class TabelaAssunto extends Component {
   updateAssunto = () => {
     const { descricao, id } = this.state.selected;
     if (descricao !== '') {
-        Api.put(`assunto/${id}`, {descricao}).then( response => {
+        Api.put(`assunto/${id}`, {descricao}).then( () => {
+          this.props.updateAssunto(this.state.selected)
+          const assuntos = this.state.assuntos.filter(a => this.state.selected.id !== a.id)
+          this.setState({assuntos : [this.state.selected].concat(assuntos)})
             toast.sucesso("Assunto atualizado com sucesso")
         }).catch( () => {
             toast.erro("Erro ao atualizar o assunto")
@@ -52,8 +60,11 @@ class TabelaAssunto extends Component {
 
   deleteAssunto = () => {
     const { id } = this.state.selected;
-    Api.delete(`assunto/${id}`).then( response => {
-        toast.sucesso("Assunto excluído com sucesso")
+    Api.delete(`assunto/${id}`).then( () => {
+      this.props.removeAssunto(this.state.selected)
+      const assuntos = this.state.assuntos.filter(a => this.state.selected.id !== a.id)
+      this.setState(assuntos)
+      toast.sucesso("Assunto excluído com sucesso")
     }).catch( () => {
         toast.erro("Erro ao excluir o assunto")
     })
@@ -70,7 +81,7 @@ class TabelaAssunto extends Component {
                 </tr>
             </thead>
             <tbody>
-            {this.props.assuntosEdit
+            {this.state.assuntos
               .slice(this.state.currentPage * 10, (this.state.currentPage + 1) * 10)
               .map(assunto => {
                 return (
@@ -86,7 +97,7 @@ class TabelaAssunto extends Component {
             </tbody>
         </Table>
         <Paginacao hidden={this.props.hidden}
-          pagesCount={Math.round((this.props.assuntosEdit.length / 10) + 0.5)}
+          pagesCount={Math.round((this.state.assuntos.length / 10) + 0.5)}
           currentPage={this.state.currentPage}
           handlePageClick={this.handlePageClick}
           handlePreviousClick={this.handlePreviousClick}

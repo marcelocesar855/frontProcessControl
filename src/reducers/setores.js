@@ -3,9 +3,11 @@ export default function setores(state = [], action) {
       case 'ADD_SETOR':
         return [...state, action.setor]
       case 'REMOVE_SETOR':
-        return null
-      case 'UPDATE_SETOR':
-        return null
+        const setores = state.filter(s => action.setor.id !== s.id)
+        return setores
+      case 'UPDATE_SETOR': 
+      const setoresUp = state.filter(s => action.setor.id !== s.id)
+      return [action.setor].concat(setoresUp)
       case 'SEARCH_SETORES':
           return action.setores
       default:

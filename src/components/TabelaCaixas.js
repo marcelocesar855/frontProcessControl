@@ -14,7 +14,12 @@ class TabelaCaixas extends Component {
     selected : {numero : '', estante : '', prateleira : '', setor : {sigla: 'Setor', id : 0}},
     dropdownOpenSetor : false,
     showModalEdit: false,
-    showModalDel: false
+    showModalDel: false,
+    caixas : []
+  }
+
+  componentWillReceiveProps() {
+    this.setState({caixas : this.props.caixas})
   }
 
    handlePageClick = (e, index) => {
@@ -60,8 +65,10 @@ class TabelaCaixas extends Component {
         if(prateleira !== ''){
             if (estante !== 0 ) {
                 if (setorId !== 0) {
-                    Api.put(`caixa/${id}`, {numero, prateleira, estante, setorId}).then( response => {
-                        toast.sucesso("Caixa atualizada com sucesso")
+                    Api.put(`caixa/${id}`, {numero, prateleira, estante, setorId}).then( () => {
+                      const caixas = this.state.caixas.filter(c => this.state.selected.id !== c.id)
+                      this.setState({caixas : [this.state.selected].concat(caixas)})
+                      toast.sucesso("Caixa atualizada com sucesso")
                     }).catch( () => {
                         toast.erro("Erro ao atualizar a caixa")
                     })
@@ -97,7 +104,7 @@ class TabelaCaixas extends Component {
                 </tr>
             </thead>
             <tbody>
-            {this.props.caixas
+            {this.state.caixas
               .slice(this.state.currentPage * 10, (this.state.currentPage + 1) * 10)
               .map(caixa => {
                 return (
@@ -118,7 +125,7 @@ class TabelaCaixas extends Component {
             </tbody>
         </Table>
         <Paginacao hidden={this.props.hidden}
-          pagesCount={Math.round((this.props.caixas.length / 10) + 0.5)}
+          pagesCount={Math.round((this.state.caixas.length / 10) + 0.5)}
           currentPage={this.state.currentPage}
           handlePageClick={this.handlePageClick}
           handlePreviousClick={this.handlePreviousClick}

@@ -13,7 +13,12 @@ class TabelaSetor extends Component {
     currentPage : 0,
     selected : {nome : '', sigla : ''},
     showModalEdit: false,
-    showModalDel: false
+    showModalDel: false,
+    setores: []
+  }
+
+  componentWillReceiveProps() {
+    this.setState({setores : this.props.setoresEdit})
   }
 
   handlePageClick = (e, index) => {
@@ -43,7 +48,10 @@ class TabelaSetor extends Component {
     const { nome, sigla, id } = this.state.selected;
     if (nome !== '') {
         if(sigla !== ''){
-          Api.put(`setor/${id}`, {nome, sigla}).then( response => {
+          Api.put(`setor/${id}`, {nome, sigla}).then( () => {
+            this.props.updateSetor(this.state.selected)
+            const setores = this.state.setores.filter(s => this.state.selected.id !== s.id)
+            this.setState({setores : [this.state.selected].concat(setores)})
               toast.sucesso("Setor atualizado com sucesso")
           }).catch( () => {
               toast.erro("Erro ao atualizar o setor")
@@ -58,7 +66,10 @@ class TabelaSetor extends Component {
 
   deleteSetor = () => {
     const { id } = this.state.selected;
-    Api.delete(`setor/${id}`).then( response => {
+    Api.delete(`setor/${id}`).then( () => {
+        this.props.removeSetor(this.state.selected)
+        const setores = this.state.setores.filter(s => this.state.selected.id !== s.id)
+        this.setState(setores)
         toast.sucesso("Processo excluído com sucesso")
     }).catch( () => {
         toast.erro("Erro ao excluir o processo")
@@ -76,7 +87,7 @@ class TabelaSetor extends Component {
                 </tr>
             </thead>
             <tbody>
-            {this.props.setoresEdit
+            {this.state.setores
               .slice(this.state.currentPage * 10, (this.state.currentPage + 1) * 10)
               .map(setor => {
                 return (
@@ -95,7 +106,7 @@ class TabelaSetor extends Component {
             </tbody>
         </Table>
         <Paginacao hidden={this.props.hidden}
-          pagesCount={Math.round((this.props.setoresEdit.length / 10) + 0.5)}
+          pagesCount={Math.round((this.state.setores.length / 10) + 0.5)}
           currentPage={this.state.currentPage}
           handlePageClick={this.handlePageClick}
           handlePreviousClick={this.handlePreviousClick}
