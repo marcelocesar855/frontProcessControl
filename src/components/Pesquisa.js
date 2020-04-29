@@ -27,17 +27,11 @@ class Pesquisa extends Component {
         })
         await Api.get('assuntos/').then( response => {
             this.props.searchAssunto(response.data)
-            if (this.props.assuntos.length <= 0){
-                this.props.searchAssunto([{descricao : 'Sem assuntos cadastrados', id : 0}])
-            }
         }).catch(erro => {
             console.log(erro)
         })
         await Api.get('setores/').then( response => {
            this.props.searchSetor(response.data)
-           if (this.props.setores.length <= 0){
-            this.props.searchSetor([{sigla : 'Sem setores cadastrados', id : 0}])
-        }
         }).catch(erro => {
             console.log(erro)
         })

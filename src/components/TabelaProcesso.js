@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, ModalHeader, ModalBody, ModalFooter, Table, Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Button } from 'reactstrap';
+import {Modal, ModalHeader, Row, Col, ModalBody, ModalFooter, Table, Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Button } from 'reactstrap';
 import Paginacao from './Paginacao';
 import Api from '../services/Api'
 import moment from 'moment'
@@ -13,9 +13,11 @@ class TabelaProcesso extends Component {
   state={
     caixas:[],
     currentPage: 0,
-    selected:{numero : '', data : '', assunto : {descricao : 'Assunto', id : 0}, caixa : {numero : 'Caixa', id : 0, setor : {sigla : 'Setor', id : 0}}},
+    selected:{numero : '', data : '', assunto : {descricao : 'Assunto', id : 0}, caixa : {numero : 'Caixa', id : 0, setor : {sigla : 'Setor', id : 0}},
+    volumes : 0, setor : {sigla : 'Setor', id : 0}},
     showModalEdit: false,
     showModalDel: false,
+    showModalArq: false,
     dropdownOpenSetor : false,
     dropdownOpenAssunto : false,
     dropdownOpenCaixa : false,
@@ -45,6 +47,38 @@ class TabelaProcesso extends Component {
 
   toggleDel = () => this.setState({showModalDel: !this.state.showModalDel})
 
+  toggleArq = () => this.setState({showModalArq: !this.state.showModalArq})
+
+  arquivarProcesso = (processo) => {
+    if(processo.setorId === null){
+      processo = {...processo, setor : {sigla : 'Setor', id : 0}}
+      this.setState({selected : processo, showModalArq: !this.state.showModalArq})
+    }else{
+      processo = {...processo, setorId : null}
+      const { id, setorId } = processo;
+      Api.put(`processo/${id}`, {setorId}).then( () => {
+        this.props.updateProcesso(processo)
+        const processos = this.state.processos.filter(p => processo.id !== p.id)
+        this.setState({processos : [processo].concat(processos)})
+        toast.sucesso("Processo arquivado com sucesso")
+      }).catch( () => {
+        toast.erro("Erro ao arquivar o processo")
+      })
+    }
+  }
+
+  desarquivarProcesso = () => {
+      const { id, setorId } = this.state.selected;
+      Api.put(`processo/${id}`, {setorId}).then( () => {
+        this.props.updateProcesso(this.state.selected)
+        const processos = this.state.processos.filter(p => this.state.selected.id !== p.id)
+        this.setState({processos : [this.state.selected].concat(processos)})
+        toast.sucesso("Processo desarquivado com sucesso")
+      }).catch( () => {
+        toast.erro("Erro ao desarquivar o processo")
+      })
+  }
+
   toggleSetor = () => this.setState({dropdownOpenSetor : !this.state.dropdownOpenSetor})
 
   toggleAssunto = () => this.setState({dropdownOpenAssunto : !this.state.dropdownOpenAssunto})
@@ -64,6 +98,18 @@ class TabelaProcesso extends Component {
     })
     const setorId = e.target.value;
     this.getCaixaSetor(setorId)
+}
+
+changeSetorArq = async (e) => {
+  this.setState({
+    selected : {...this.state.selected,
+      setor : {
+        sigla : e.target.textContent,
+        id : e.target.value
+      },
+      setorId : e.target.value  
+    }
+  })
 }
 
   getCaixaSetor = async (setorId) => {
@@ -109,28 +155,38 @@ class TabelaProcesso extends Component {
       data : e.target.value
   }})
 
+  changeVolumes = (e) => this.setState({
+    selected :{
+      ...this.state.selected, 
+      volumes : e.target.value
+  }})
+
   updateProcesso = () => {
-    const { numero, data, id } = this.state.selected;
+    const { numero, data, id, volumes } = this.state.selected;
       const caixaId = this.state.selected.caixa.id
       const assuntoId = this.state.selected.assunto.id
       if (numero !== '') {
           if(data !== ''){
-              if (caixaId !== 0 ) {
-                  if (assuntoId !== 0) {
-                      Api.put(`processo/${id}`, {numero, data ,caixaId, assuntoId}).then( () => {
-                        this.props.updateProcesso(this.state.selected)
-                        const processos = this.state.processos.filter(p => this.state.selected.id !== p.id)
-                        this.setState({processos : [this.state.selected].concat(processos)})
-                        toast.sucesso("Processo atualizado com sucesso")
-                      }).catch( () => {
-                          toast.erro("Erro ao atualizar o processo")
-                      })
-                  }else {
-                      toast.erro("Informe o assunto do processo")
-                  }
+            if(volumes !== ''){
+                if (caixaId !== 0 ) {
+                    if (assuntoId !== 0) {
+                        Api.put(`processo/${id}`, {numero, data, volumes ,caixaId, assuntoId}).then( () => {
+                          this.props.updateProcesso(this.state.selected)
+                          const processos = this.state.processos.filter(p => this.state.selected.id !== p.id)
+                          this.setState({processos : [this.state.selected].concat(processos)})
+                          toast.sucesso("Processo atualizado com sucesso")
+                        }).catch( () => {
+                            toast.erro("Erro ao atualizar o processo")
+                        })
+                    }else {
+                        toast.erro("Informe o assunto do processo")
+                    }
+                }else {
+                    toast.erro("Informe a caixa do processo")
+                }
               }else {
-                  toast.erro("Informe a caixa do processo")
-              }
+                toast.erro("Informe o número de volumes do processo")
+            }
           }else {
               toast.erro("Informe a data de autuação do processo")
           }
@@ -161,6 +217,7 @@ class TabelaProcesso extends Component {
                   <th>Data Autuação</th>
                   <th>Setor</th>
                   <th>Assunto</th>
+                  <th>Volumes</th>
                   <th>Ação</th>
                 </tr>
             </thead>
@@ -173,11 +230,13 @@ class TabelaProcesso extends Component {
                     <tr>
                       <td>{processo.numero}</td>
                       <td>{moment(processo.data).format('DD/MM/YYYY')}</td>
-                      <td>{processo.caixa.setor.sigla}</td>
+                      <td>{processo.setorId === null ? processo.caixa.setor.sigla : `Sedido para ${processo.setor.sigla}`}</td>
                       <td>{processo.assunto.descricao}</td>
+                      <td>{processo.volumes}</td>
                       <td>
-                        <Button onClick={() => {this.setState({selected: processo}); this.toggleEdit(); this.getCaixaSetor(processo.caixa.setor.id)}}>Editar</Button>
-                        <Button className='ml-3' onClick={() => {this.setState({selected: processo}); this.toggleDel()}}>Excluir</Button>
+                        <Button onClick={() => {processo = {...processo, setor : {sigla : 'Setor', id : 0}};this.setState({selected: processo}); this.toggleEdit(); this.getCaixaSetor(processo.caixa.setor.id)}}>Editar</Button>
+                        <Button className='ml-3' onClick={() => {processo = {...processo, setor : {sigla : 'Setor', id : 0}};this.setState({selected: processo}); this.toggleDel()}}>Excluir</Button>
+                        <Button className='ml-3' onClick={() =>this.arquivarProcesso(processo)}>{processo.setorId === null ? 'Desarquivar' : 'Arquivar'}</Button>
                       </td>
                     </tr>
                   </React.Fragment>
@@ -199,8 +258,16 @@ class TabelaProcesso extends Component {
                     <FormGroup>
                         <Label for="processo">Número do processo</Label>
                         <Input value={this.state.selected.numero} id="processo" onChange={this.changeNumeroProcesso}/>
-                        <Label for="data">Data autuação</Label>
-                        <Input value={moment(this.state.selected.data).format('YYYY-MM-DD')} id="data" type="date" className='w-75' onChange={this.changeData}/>
+                        <Row form>
+                            <Col>
+                              <Label for="data">Data autuação</Label>
+                              <Input value={moment(this.state.selected.data).format('YYYY-MM-DD')} id="data" type="date"  onChange={this.changeData}/>
+                            </Col>
+                            <Col>
+                                <Label for="volumes">Volumes</Label>
+                                <Input value={this.state.selected.volumes} id="volumes" className='w-50' onChange={this.changeVolumes}/>                                
+                            </Col>
+                        </Row>
                     </FormGroup>
                     <FormGroup>
                         <ButtonDropdown isOpen={this.state.dropdownOpenSetor} toggle={this.toggleSetor}>
@@ -210,7 +277,7 @@ class TabelaProcesso extends Component {
                             <DropdownMenu>
                               {this.props.setores.map(setor => {
                                 return(
-                                  <DropdownItem key={setor.id} disabled={setor.id === 0 ? true : false} onClick={this.changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
+                                  <DropdownItem key={setor.id} onClick={this.changeSetor} value={setor.id}>{setor.sigla}</DropdownItem>
                                 )
                               })}
                             </DropdownMenu>
@@ -256,6 +323,30 @@ class TabelaProcesso extends Component {
             <ModalFooter>
                 <Button color="primary" onClick={() => {this.deleteProcesso(); this.toggleDel()}}>Sim, exclua</Button>
                 <Button className='ml-3' color="secondary" onClick={this.toggleDel}>Cancelar</Button>
+            </ModalFooter>
+        </Modal>
+        <Modal isOpen={this.state.showModalArq} toggle={this.toggleArq}>
+            <ModalHeader toggle={this.toggleArq}>Desarquivar processo</ModalHeader>
+            <ModalBody>
+            <p className="text-center">Escolha o setor para onde o processo<br/>nº <span className='font-weight-bold'>{this.state.selected.numero}</span>,
+            autuado em <span className='font-weight-bold'>{moment(this.state.selected.data).format('DD/MM/YYYY')}</span><br/>pertencente ao setor <span className='font-weight-bold'>{this.state.selected.caixa.setor.sigla}</span>,
+            será sedido.<br/><br/>
+            <ButtonDropdown className="text-center" isOpen={this.state.dropdownOpenSetor} toggle={this.toggleSetor}>
+                <DropdownToggle caret>
+                    {this.state.selected.setor.sigla}
+                </DropdownToggle>
+                <DropdownMenu>
+                  {this.props.setores.map(setor => {
+                    return(
+                      <DropdownItem key={setor.id} onClick={this.changeSetorArq} value={setor.id}>{setor.sigla}</DropdownItem>
+                    )
+                  })}
+                </DropdownMenu>
+            </ButtonDropdown></p>
+            </ModalBody>
+            <ModalFooter>
+                <Button color="primary" onClick={() => {this.desarquivarProcesso(); this.toggleArq()}}>Desarquivar</Button>
+                <Button className='ml-3' color="secondary" onClick={this.toggleArq}>Cancelar</Button>
             </ModalFooter>
         </Modal>
       </div>

@@ -3,7 +3,7 @@ import Api from '../services/Api'
 import * as processosActions from '../actions/processos';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Card, CardTitle, CardBody, Button } from 'reactstrap';
+import { Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Card, CardTitle, CardBody, Button, Row, Col } from 'reactstrap';
 import * as toast from '../utils/toasts'
 
 class CadastroProcesso extends Component {
@@ -17,7 +17,8 @@ class CadastroProcesso extends Component {
         labelAssunto : {descricao : 'Assunto', id : 0},
         labelCaixa : {numero : 'Caixa', id : 0},
         numero : '',
-        data : ''
+        data : '',
+        volumes: ''
     }
 
     toggleSetor = () => this.setState({dropdownOpenSetor : !this.state.dropdownOpenSetor})
@@ -54,6 +55,8 @@ class CadastroProcesso extends Component {
 
     changeNumero = (e) => this.setState({numero : e.target.value})
 
+    changeVolumes = (e) => this.setState({volumes : e.target.value})
+
     changeCaixa = (e) => this.setState({
         labelCaixa : {
             numero : e.target.textContent,
@@ -70,30 +73,35 @@ class CadastroProcesso extends Component {
             labelCaixa : {numero : 'Caixa', id : 0},
             caixas : [],
             numero : '',
-            data : ''
+            data : '',
+            volumes : ''
         })
     }
 
     storeProcesso = () => {
-        const { numero, data } = this.state;
+        const { numero, data, volumes } = this.state;
         const caixaId = this.state.labelCaixa.id
         const assuntoId = this.state.labelAssunto.id
         if (numero !== '') {
             if(data !== ''){
-                if (caixaId !== 0 ) {
-                    if (assuntoId !== 0) {
-                        Api.post('processo/', {numero, data ,caixaId, assuntoId}).then( response => {
-                            toast.sucesso("Processo cadastrado com sucesso")
-                            this.cleanForm()
-                        }).catch( () => {
-                            toast.erro("Erro ao cadastrar o processo")
-                            this.cleanForm()
-                        })
+                if(volumes !== ''){
+                    if (caixaId !== 0 ) {
+                        if (assuntoId !== 0) {
+                            Api.post('processo/', {numero, data, volumes ,caixaId, assuntoId}).then( response => {
+                                toast.sucesso("Processo cadastrado com sucesso")
+                                this.cleanForm()
+                            }).catch( () => {
+                                toast.erro("Erro ao cadastrar o processo")
+                                this.cleanForm()
+                            })
+                        }else {
+                            toast.erro("Informe o assunto do processo")
+                        }
                     }else {
-                        toast.erro("Informe o assunto do processo")
+                        toast.erro("Informe a caixa do processo")
                     }
                 }else {
-                    toast.erro("Informe a caixa do processo")
+                    toast.erro("Informe o número de volumes do processo")
                 }
             }else {
                 toast.erro("Informe a data de autuação do processo")
@@ -112,8 +120,16 @@ class CadastroProcesso extends Component {
                         <FormGroup>
                             <Label for="processo">Número do processo</Label>
                             <Input value={this.state.numero} id="processo" onChange={this.changeNumero}/>
-                            <Label for="data">Data autuação</Label>
-                            <Input value={this.state.data} id="data" type="date" className='w-75' onChange={this.changeData}/>
+                            <Row form>
+                                <Col>
+                                    <Label for="data">Data autuação</Label>
+                                    <Input value={this.state.data} id="data" type="date" onChange={this.changeData}/>
+                                </Col>
+                                <Col>
+                                    <Label for="volumes">Volumes</Label>
+                                    <Input value={this.state.volumes} id="volumes" className='w-50' onChange={this.changeVolumes}/>                                
+                                </Col>
+                            </Row>
                         </FormGroup>
                         <FormGroup>
                             <ButtonDropdown isOpen={this.state.dropdownOpenSetor} toggle={this.toggleSetor}>
