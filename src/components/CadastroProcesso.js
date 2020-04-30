@@ -18,7 +18,8 @@ class CadastroProcesso extends Component {
         labelCaixa : {numero : 'Caixa', id : 0},
         numero : '',
         data : '',
-        volumes: ''
+        volumes: '',
+        interessado : ''
     }
 
     toggleSetor = () => this.setState({dropdownOpenSetor : !this.state.dropdownOpenSetor})
@@ -55,6 +56,8 @@ class CadastroProcesso extends Component {
 
     changeNumero = (e) => this.setState({numero : e.target.value})
 
+    changeInteressado = (e) => this.setState({interessado : e.target.value})
+
     changeVolumes = (e) => this.setState({volumes : e.target.value})
 
     changeCaixa = (e) => this.setState({
@@ -74,31 +77,36 @@ class CadastroProcesso extends Component {
             caixas : [],
             numero : '',
             data : '',
-            volumes : ''
+            volumes : '',
+            interessado : ''
         })
     }
 
     storeProcesso = () => {
-        const { numero, data, volumes } = this.state;
+        const { numero, data, volumes, interessado } = this.state;
         const caixaId = this.state.labelCaixa.id
         const assuntoId = this.state.labelAssunto.id
         if (numero !== '') {
             if(data !== ''){
                 if(volumes !== ''){
-                    if (caixaId !== 0 ) {
-                        if (assuntoId !== 0) {
-                            Api.post('processo/', {numero, data, volumes ,caixaId, assuntoId}).then( response => {
-                                toast.sucesso("Processo cadastrado com sucesso")
-                                this.cleanForm()
-                            }).catch( () => {
-                                toast.erro("Erro ao cadastrar o processo")
-                                this.cleanForm()
-                            })
+                    if(interessado !== ''){
+                        if (caixaId !== 0 ) {
+                            if (assuntoId !== 0) {
+                                Api.post('processo/', {numero, data, volumes, interessado, caixaId, assuntoId}).then( response => {
+                                    toast.sucesso("Processo cadastrado com sucesso")
+                                    this.cleanForm()
+                                }).catch( () => {
+                                    toast.erro("Erro ao cadastrar o processo")
+                                    this.cleanForm()
+                                })
+                            }else {
+                                toast.erro("Informe o assunto do processo")
+                            }
                         }else {
-                            toast.erro("Informe o assunto do processo")
+                            toast.erro("Informe a caixa do processo")
                         }
                     }else {
-                        toast.erro("Informe a caixa do processo")
+                        toast.erro("Informe o interessado do processo")
                     }
                 }else {
                     toast.erro("Informe o número de volumes do processo")
@@ -130,6 +138,8 @@ class CadastroProcesso extends Component {
                                     <Input value={this.state.volumes} id="volumes" className='w-50' onChange={this.changeVolumes}/>                                
                                 </Col>
                             </Row>
+                            <Label for="interessado">Interessado</Label>
+                            <Input value={this.state.interessado} id="interessado" onChange={this.changeInteressado}/>
                         </FormGroup>
                         <FormGroup>
                             <ButtonDropdown isOpen={this.state.dropdownOpenSetor} toggle={this.toggleSetor}>

@@ -36,6 +36,7 @@ class Tabela extends Component {
                   <th>Setor</th>
                   <th>Assunto</th>
                   <th>Volumes</th>
+                  <th>Interessado</th>
                   <th>Caixa</th>
                   <th>Estante</th>
                   <th>Prateleira</th>
@@ -53,6 +54,7 @@ class Tabela extends Component {
                       <td>{processo.setorId === null ? processo.caixa.setor.sigla : `Sedido para ${processo.setor.sigla}`}</td>
                       <td>{processo.assunto.descricao}</td>
                       <td>{processo.volumes}</td>
+                      <td>{processo.interessado}</td>
                       <td>{processo.setorId === null ? processo.caixa.numero : 'Desarq.'}</td>
                       <td>{processo.setorId === null ? processo.caixa.estante : 'Desarq.'}</td>
                       <td>{processo.setorId === null ? processo.caixa.prateleira : 'Desarq.'}</td>

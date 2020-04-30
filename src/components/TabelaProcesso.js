@@ -14,7 +14,7 @@ class TabelaProcesso extends Component {
     caixas:[],
     currentPage: 0,
     selected:{numero : '', data : '', assunto : {descricao : 'Assunto', id : 0}, caixa : {numero : 'Caixa', id : 0, setor : {sigla : 'Setor', id : 0}},
-    volumes : 0, setor : {sigla : 'Setor', id : 0}},
+    volumes : 0, setor : {sigla : 'Setor', id : 0}, interessado : ''},
     showModalEdit: false,
     showModalDel: false,
     showModalArq: false,
@@ -139,6 +139,12 @@ changeSetorArq = async (e) => {
       numero : e.target.value
   }})
 
+  changeInteressado = (e) => this.setState({
+    selected :{
+      ...this.state.selected, 
+      interessado : e.target.value
+  }})
+
   changeCaixa = (e) => this.setState({
     selected : {...this.state.selected,
       caixa : {
@@ -162,15 +168,16 @@ changeSetorArq = async (e) => {
   }})
 
   updateProcesso = () => {
-    const { numero, data, id, volumes } = this.state.selected;
+    const { numero, data, id, volumes, interessado } = this.state.selected;
       const caixaId = this.state.selected.caixa.id
       const assuntoId = this.state.selected.assunto.id
       if (numero !== '') {
           if(data !== ''){
             if(volumes !== ''){
-                if (caixaId !== 0 ) {
+              if(interessado !== ''){
+                  if (caixaId !== 0 ) {
                     if (assuntoId !== 0) {
-                        Api.put(`processo/${id}`, {numero, data, volumes ,caixaId, assuntoId}).then( () => {
+                        Api.put(`processo/${id}`, {numero, data, volumes, interessado ,caixaId, assuntoId}).then( () => {
                           this.props.updateProcesso(this.state.selected)
                           const processos = this.state.processos.filter(p => this.state.selected.id !== p.id)
                           this.setState({processos : [this.state.selected].concat(processos)})
@@ -181,8 +188,11 @@ changeSetorArq = async (e) => {
                     }else {
                         toast.erro("Informe o assunto do processo")
                     }
+                  }else {
+                      toast.erro("Informe a caixa do processo")
+                  }
                 }else {
-                    toast.erro("Informe a caixa do processo")
+                  toast.erro("Informe o interessado do processo")
                 }
               }else {
                 toast.erro("Informe o número de volumes do processo")
@@ -218,6 +228,7 @@ changeSetorArq = async (e) => {
                   <th>Setor</th>
                   <th>Assunto</th>
                   <th>Volumes</th>
+                  <th>Interessado</th>
                   <th>Ação</th>
                 </tr>
             </thead>
@@ -233,6 +244,7 @@ changeSetorArq = async (e) => {
                       <td>{processo.setorId === null ? processo.caixa.setor.sigla : `Sedido para ${processo.setor.sigla}`}</td>
                       <td>{processo.assunto.descricao}</td>
                       <td>{processo.volumes}</td>
+                      <td>{processo.interessado}</td>
                       <td>
                         <Button onClick={() => {processo = {...processo, setor : {sigla : 'Setor', id : 0}};this.setState({selected: processo}); this.toggleEdit(); this.getCaixaSetor(processo.caixa.setor.id)}}>Editar</Button>
                         <Button className='ml-3' onClick={() => {processo = {...processo, setor : {sigla : 'Setor', id : 0}};this.setState({selected: processo}); this.toggleDel()}}>Excluir</Button>
@@ -268,6 +280,8 @@ changeSetorArq = async (e) => {
                                 <Input value={this.state.selected.volumes} id="volumes" className='w-50' onChange={this.changeVolumes}/>                                
                             </Col>
                         </Row>
+                        <Label for="interessado">Interessado</Label>
+                        <Input value={this.state.selected.interessado} id="interessado" onChange={this.changeInteressado}/>
                     </FormGroup>
                     <FormGroup>
                         <ButtonDropdown isOpen={this.state.dropdownOpenSetor} toggle={this.toggleSetor}>
