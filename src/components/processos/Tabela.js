@@ -38,7 +38,7 @@ class Tabela extends Component {
                   <th>Volumes</th>
                   <th>Interessado</th>
                   <th>Caixa</th>
-                  <th>Estante</th>
+                  <th>Armário</th>
                   <th>Prateleira</th>
                 </tr>
             </thead>
@@ -56,7 +56,7 @@ class Tabela extends Component {
                       <td>{processo.volumes}</td>
                       <td>{processo.interessado}</td>
                       <td>{processo.setorId === null ? processo.caixa.numero : 'Desarq.'}</td>
-                      <td>{processo.setorId === null ? processo.caixa.estante : 'Desarq.'}</td>
+                      <td>{processo.setorId === null ? processo.caixa.armario : 'Desarq.'}</td>
                       <td>{processo.setorId === null ? processo.caixa.prateleira : 'Desarq.'}</td>
                     </tr>
                   </React.Fragment>

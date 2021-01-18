@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 import {Modal, ModalHeader, ModalBody, ModalFooter, Table, Form, FormGroup, Input, Label, Button } from 'reactstrap';
 import Paginacao from './Paginacao';
-import Api from '../services/Api'
-import * as assuntosActions from '../actions/assuntos';
+import Api from '../../services/Api'
+import * as assuntosActions from '../../actions/assuntos';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as toast from '../utils/toasts'
+import * as toast from '../../utils/toasts'
 
 class TabelaAssunto extends Component {
 

@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import Api from '../services/Api'
-import * as processosActions from '../actions/processos';
+import Api from '../../services/Api'
+import * as processosActions from '../../actions/processos';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Card, CardTitle, CardBody, Button, Row, Col } from 'reactstrap';
-import * as toast from '../utils/toasts'
+import * as toast from '../../utils/toasts'
 
 class CadastroProcesso extends Component {
 

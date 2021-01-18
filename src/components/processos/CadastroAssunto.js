@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import Api from '../services/Api'
+import Api from '../../services/Api'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as assuntosActions from '../actions/assuntos';
+import * as assuntosActions from '../../actions/assuntos';
 import { Form, FormGroup, Input, Label, Card, CardTitle, CardBody, Button } from 'reactstrap';
-import * as toast from '../utils/toasts'
+import * as toast from '../../utils/toasts'
 
 const CadastroAssunto = (props) => {
 

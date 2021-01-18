@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as processosActions from '../actions/processos';
-import * as setoresActions from '../actions/setores';
-import * as assuntosActions from '../actions/assuntos';
+import * as processosActions from '../../actions/processos';
+import * as setoresActions from '../../actions/setores';
+import * as assuntosActions from '../../actions/assuntos';
 import Tabela from './Tabela'
-import Api from '../services/Api'
-import * as toast from '../utils/toasts'
+import Api from '../../services/Api'
+import * as toast from '../../utils/toasts'
 import { InputGroup, Input, InputGroupAddon, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Row } from 'reactstrap';
 
 class Pesquisa extends Component {

@@ -1,17 +1,17 @@
 import React, {Component} from 'react';
 import {Col, Row, Modal, ModalHeader, ModalBody, ModalFooter, Table, Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Button } from 'reactstrap';
 import Paginacao from './Paginacao';
-import Api from '../services/Api'
-import * as assuntosActions from '../actions/assuntos';
+import Api from '../../services/Api'
+import * as assuntosActions from '../../actions/assuntos';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as toast from '../utils/toasts'
+import * as toast from '../../utils/toasts'
 
 class TabelaCaixas extends Component {
 
   state = {
     currentPage : 0,
-    selected : {numero : '', estante : '', prateleira : '', setor : {sigla: 'Setor', id : 0}},
+    selected : {numero : '', armario : '', prateleira : '', setor : {sigla: 'Setor', id : 0}},
     dropdownOpenSetor : false,
     showModalEdit: false,
     showModalDel: false,
@@ -45,7 +45,7 @@ class TabelaCaixas extends Component {
 
   changeNumero = (e) => this.setState({selected: {...this.state.selected, numero : e.target.value}})
     
-  changeEstante = (e) => this.setState({selected: {...this.state.selected, estante : e.target.value}})
+  changeArmario = (e) => this.setState({selected: {...this.state.selected, armario : e.target.value}})
 
   changePrateleira = (e) => this.setState({selected: {...this.state.selected, prateleira : e.target.value}})
 
@@ -59,13 +59,13 @@ class TabelaCaixas extends Component {
     })
 
   updateCaixa = () => {
-    const { numero, prateleira, estante, id } = this.state.selected;
+    const { numero, prateleira, armario, id } = this.state.selected;
     const setorId = this.state.selected.setor.id
     if (numero !== '') {
         if(prateleira !== ''){
-            if (estante !== 0 ) {
+            if (armario !== 0 ) {
                 if (setorId !== 0) {
-                    Api.put(`caixa/${id}`, {numero, prateleira, estante, setorId}).then( () => {
+                    Api.put(`caixa/${id}`, {numero, prateleira, armario, setorId}).then( () => {
                       const caixas = this.state.caixas.filter(c => this.state.selected.id !== c.id)
                       this.setState({caixas : [this.state.selected].concat(caixas)})
                       toast.sucesso("Caixa atualizada com sucesso")
@@ -76,7 +76,7 @@ class TabelaCaixas extends Component {
                     toast.erro("Informe o setor da caixa")
                 }
             }else {
-                toast.erro("Informe a estante da caixa")
+                toast.erro("Informe a armário da caixa")
             }
         }else {
             toast.erro("Informe a prateleira da caixa")
@@ -98,7 +98,7 @@ class TabelaCaixas extends Component {
                 <tr>
                   <th>Número</th>
                   <th>Setor</th>
-                  <th>Estante</th>
+                  <th>Armário</th>
                   <th>Prateleira</th>
                   <th>Ação</th>
                 </tr>
@@ -112,7 +112,7 @@ class TabelaCaixas extends Component {
                     <tr>
                       <td>{caixa.numero}</td>
                       <td>{caixa.setor.sigla}</td>
-                      <td>{caixa.estante}</td>
+                      <td>{caixa.armario}</td>
                       <td>{caixa.prateleira}</td>
                       <td>
                         <Button onClick={() => {this.setState({selected : caixa}); this.toggleEdit()}}>Editar</Button>
@@ -142,8 +142,8 @@ class TabelaCaixas extends Component {
                             <Input value={this.state.selected.numero} id="numero" className='w-50' onChange={this.changeNumero}/>
                         </Col>
                         <Col>
-                            <Label for="estante">Estante</Label>
-                            <Input value={this.state.selected.estante} id="estante" className='w-50' onChange={this.changeEstante}/>
+                            <Label for="armario">Armário</Label>
+                            <Input value={this.state.selected.armario} id="armario" className='w-50' onChange={this.changearmario}/>
                         </Col>
                     </Row>
                     <Row form>

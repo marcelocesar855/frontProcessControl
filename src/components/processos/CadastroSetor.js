@@ -1,10 +1,10 @@
 import React, { Component} from 'react';
-import Api from '../services/Api'
+import Api from '../../services/Api'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as setoresActions from '../actions/setores';
+import * as setoresActions from '../../actions/setores';
 import { Form, FormGroup, Input, Label, Card, CardTitle, CardBody, Button } from 'reactstrap';
-import * as toast from '../utils/toasts'
+import * as toast from '../../utils/toasts'
 
 class CadastroSetor extends Component {
 
@@ -43,7 +43,7 @@ class CadastroSetor extends Component {
     }
     render () {
         return (
-            <Card className="p-3">
+            <Card className="p-3 mt-3">
                 <CardTitle><h3>Cadastro de setores</h3></CardTitle>
                 <CardBody>
                     <Form>

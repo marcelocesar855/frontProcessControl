@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import { Card, CardBody, CardTitle, InputGroup, Input, InputGroupAddon, Button, Row } from 'reactstrap';
 import TabelaAssunto from './TabelaAssunto'
-import * as toast from '../utils/toasts'
-import Api from '../services/Api'
+import * as toast from '../../utils/toasts'
+import Api from '../../services/Api'
 
 class EditarAssunto extends Component {
 

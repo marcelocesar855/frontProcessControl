@@ -1,8 +1,8 @@
 
 import { connect } from 'react-redux';
 import React, {useState} from 'react';
-import * as toast from '../utils/toasts'
-import Api from '../services/Api'
+import * as toast from '../../utils/toasts'
+import Api from '../../services/Api'
 import { Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Card, CardTitle, CardBody, Button, Row, Col } from 'reactstrap';
 
 const CadastroCaixa = (props) => {
@@ -22,22 +22,22 @@ const CadastroCaixa = (props) => {
     const [prateleira, setPrateleira] = useState('')
     const changePrateleira = (e) => setPrateleira(e.target.value)
     
-    const [estante, setEstante] = useState('')
-    const changeEstante = (e) => setEstante(e.target.value)
+    const [armario, setArmario] = useState('')
+    const changeArmario = (e) => setArmario(e.target.value)
 
     const cleanForm = () => {
         setLabelSetor({sigla : 'Setor', id : 0})
         setNumero('')
         setPrateleira('')
-        setEstante('')
+        setArmario('')
     }
 
     const storeCaixa = () => {
         var setorId = labelSetor.id
         if (numero !== '' ) {
             if (prateleira !== '') {
-                if (estante !== '') {
-                    Api.post('caixa/', {numero, estante, prateleira, setorId}).then( response => {
+                if (armario !== '') {
+                    Api.post('caixa/', {numero, armario, prateleira, setorId}).then( response => {
                         toast.sucesso("Caixa cadastrada com sucesso")
                         cleanForm()
                     }).catch( () => {
@@ -45,7 +45,7 @@ const CadastroCaixa = (props) => {
                         cleanForm()
                     })
                 }else {
-                    toast.erro("Informe a estante da caixa")
+                    toast.erro("Informe a Armário da caixa")
                 }
             }else {
                 toast.erro("Informe a prateleira da caixa")
@@ -56,7 +56,7 @@ const CadastroCaixa = (props) => {
     }
 
     return (
-        <Card className="p-3 mt-3">
+        <Card className="p-3">
             <CardTitle><h3>Cadastro de caixas</h3></CardTitle>
             <CardBody>
                 <Form>
@@ -67,8 +67,8 @@ const CadastroCaixa = (props) => {
                             <Input value={numero} type='number' id="numero" className='w-50' onChange={changeNumero}/>
                         </Col>
                         <Col>
-                            <Label for="estante">Estante</Label>
-                            <Input value={estante} id="estante" type='number' className='w-50' onChange={changeEstante}/>
+                            <Label for="armario">Armário</Label>
+                            <Input value={armario} id="armario" type='number' className='w-50' onChange={changeArmario}/>
                         </Col>
                     </Row>
                     <Row form>

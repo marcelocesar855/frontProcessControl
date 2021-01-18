@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import { Card, CardBody, CardTitle, InputGroup, Input, InputGroupAddon, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Row } from 'reactstrap';
 import TabelaCaixas from './TabelaCaixas'
-import * as toast from '../utils/toasts'
-import Api from '../services/Api'
-import * as assuntosActions from '../actions/assuntos';
+import * as toast from '../../utils/toasts'
+import Api from '../../services/Api'
+import * as assuntosActions from '../../actions/assuntos';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 

@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {Modal, ModalHeader, Row, Col, ModalBody, ModalFooter, Table, Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Button } from 'reactstrap';
 import Paginacao from './Paginacao';
-import Api from '../services/Api'
+import Api from '../../services/Api'
 import moment from 'moment'
-import * as processosActions from '../actions/processos';
+import * as processosActions from '../../actions/processos';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as toast from '../utils/toasts'
+import * as toast from '../../utils/toasts'
 
 class TabelaProcesso extends Component {
 
