@@ -101,6 +101,8 @@ class TabelaDossies extends Component {
                 return (
                   <tr>
                     <td>{dossie.numero}</td>
+                    <td>{dossie.armario}</td>
+                    <td>{dossie.prateleira}</td>
                     <td>
                       <Button onClick={() => {this.setState({selected : dossie}); this.toggleEdit()}}>Editar</Button>
                       {/*<Button className='ml-3' onClick={() => {this.setState({selected : assunto}); this.toggleDel()}}>Excluir</Button>*/}
@@ -131,8 +133,6 @@ class TabelaDossies extends Component {
                             <Label for="armario">Armário</Label>
                             <Input value={this.state.selected.armario} id="armario" type='number' onChange={this.changeArmario}/>
                         </Col>
-                    </Row>
-                    <Row form>
                         <Col>
                             <Label for="prateleira">Prateleira</Label>
                             <Input value={this.state.selected.prateleira} id="prateleira" type='number' onChange={this.changePrateleira}/>

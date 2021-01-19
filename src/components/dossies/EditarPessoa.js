@@ -68,7 +68,7 @@ class EditarPessoa extends Component {
                         <InputGroup>
                             <Input className='rounded-left' placeholder='Nome' value={this.state.nome} onChange={this.changeNome}/>
                             <InputGroupAddon addonType="append"><Button className='rounded-right' onClick={this.buscarPessoa}>Buscar</Button></InputGroupAddon>
-                            <Input className='rounded ml-3' type='number' placeholder='Matrícula' value={this.state.matricula} onChange={this.changeMatricula}/>
+                            <Input className='rounded ml-3' placeholder='Matrícula' value={this.state.matricula} onChange={this.changeMatricula}/>
                             <ButtonDropdown className='ml-3' isOpen={this.state.dropdownOpenDossies} toggle={this.toggleDossie}>
                                 <DropdownToggle caret>
                                     {this.state.labelDossie.numero}

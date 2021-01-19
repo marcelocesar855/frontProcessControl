@@ -46,9 +46,9 @@ class Tabela extends Component {
                     <tr>
                       <td>{pessoa.nome}</td>
                       <td>{pessoa.matricula}</td>
-                      <td>{pessoa.dossieId === null ? pessoa.dossie.numero : 'Desarq.'}</td>
-                      <td>{pessoa.dossieId === null ? pessoa.dossie.armario : 'Desarq.'}</td>
-                      <td>{pessoa.dossieId === null ? pessoa.dossie.prateleira : 'Desarq.'}</td>
+                      <td>{pessoa.dossie.numero}</td>
+                      <td>{pessoa.dossie.armario}</td>
+                      <td>{pessoa.dossie.prateleira}</td>
                     </tr>
                   </React.Fragment>
                 );

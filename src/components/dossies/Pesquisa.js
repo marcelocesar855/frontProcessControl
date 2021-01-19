@@ -54,7 +54,7 @@ class Pesquisa extends Component {
     search = async () => {
         const {nome, matricula} = this.state
         const dossieId = this.state.labelDossie.id
-        await Api.post('pessoas-params/', {nome, matricula,dossieId}).then( response => {
+        await Api.post('pessoa-params/', {nome, matricula,dossieId}).then( response => {
             this.props.searchPessoa(response.data)
             if (this.props.pessoas.length <= 0){
                 toast.info("Nenhum dossiê encontrado com os filtros informados",{
@@ -102,7 +102,8 @@ class Pesquisa extends Component {
 }
 
 const mapStateToProps = state => ({
-    dossies: state.dossies
+    dossies: state.dossies,
+    pessoas: state.pessoas
   });
   
   const mapDispatchToProps = dispatch =>

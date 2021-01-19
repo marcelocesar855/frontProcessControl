@@ -55,7 +55,7 @@ const CadastroPessoa = (props) => {
                     <Row form>
                         <Col>
                             <Label for="nome">Nome</Label>
-                            <Input value={nome} type='number' id="nome" onChange={changeNome}/>
+                            <Input value={nome} id="nome" onChange={changeNome}/>
                         </Col>
                     </Row>
                     <Row form>

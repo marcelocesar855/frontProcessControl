@@ -19,7 +19,7 @@ class TabelaPessoas extends Component {
   }
 
   componentWillReceiveProps() {
-    this.setState({pessoas : this.props.pessoas})
+    this.setState({pessoas : this.props.pessoasEdit})
   }
 
    handlePageClick = (e, index) => {
@@ -83,11 +83,11 @@ class TabelaPessoas extends Component {
   deletePessoa = () => {
     const { id } = this.state.selected;
     Api.delete(`pessoa/${id}`).then( () => {
-      this.props.removeDossie(this.state.selected)
+      this.props.removePessoa(this.state.selected)
       const pessoas = this.state.pessoas.filter(p => this.state.selected.id !== p.id)
-      this.setState(pessoas)
+      this.setState({pessoas})
       toast.sucesso("Dossiê excluído com sucesso")
-    }).catch( () => {
+    }).catch( (err) => {
         toast.erro("Erro ao excluir o dossiê")
     })
   }
@@ -142,14 +142,14 @@ class TabelaPessoas extends Component {
                     <Row form>
                         <Col>
                             <Label for="nome">Nome</Label>
-                            <Input value={this.state.selected.nome} type='number' id="nome" className='w-50' onChange={this.changeNome}/>
+                            <Input value={this.state.selected.nome} id="nome" onChange={this.changeNome}/>
                         </Col>
+                      </Row>
+                      <Row form>
                         <Col>
                             <Label for="matricula">Matrícula</Label>
                             <Input value={this.state.selected.matricula} id="matricula" className='w-50' onChange={this.changeMatricula}/>
                         </Col>
-                    </Row>
-                    <Row form>
                         <Col>
                             <ButtonDropdown isOpen={this.state.dropdownOpenDossie} toggle={this.toggleDossie}  className="pt-4">
                                 <DropdownToggle caret>

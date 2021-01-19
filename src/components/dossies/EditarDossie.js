@@ -49,8 +49,8 @@ class EditarDossie extends Component {
                     <CardBody>
                     <Row className="pb-3 w-75">
                         <InputGroup>
-                            <Input className='rounded-left' type='number' placeholder='Número da caixa' value={this.state.numero} onChange={this.changeNumero}/>
-                            <InputGroupAddon addonType="append"><Button className='rounded-right' onClick={this.buscarCaixa}>Buscar</Button></InputGroupAddon>
+                            <Input className='rounded-left' placeholder='Número da caixa' value={this.state.numero} onChange={this.changeNumero}/>
+                            <InputGroupAddon addonType="append"><Button className='rounded-right' onClick={this.buscarDossie}>Buscar</Button></InputGroupAddon>
                             <Input className='rounded-left ml-3' type='number' placeholder='Armário' value={this.state.armario} onChange={this.changeArmario}/>
                             <Input className='rounded-right' type='number' placeholder='Prateleira' value={this.state.prateleira} onChange={this.changePrateleira}/>
                             <Button className='ml-3' outline onClick={this.cleanFilters}>Limpar filtros</Button>
