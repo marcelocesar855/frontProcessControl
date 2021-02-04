@@ -1,5 +1,5 @@
 
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import * as toast from '../../utils/toasts'
 import Api from '../../services/Api'
 import { Form, FormGroup, Input, Label, Card, CardTitle, CardBody, Button, Row, Col } from 'reactstrap';
@@ -14,6 +14,15 @@ const CadastroDossie = () => {
     
     const [armario, setArmario] = useState('')
     const changeArmario = (e) => setArmario(e.target.value)
+
+    const [rows, setRows] = useState('')
+
+    useEffect(() => {
+        Api.get("dossie-rows").then(response =>{
+            console.log(response.data)
+            setRows(response.data)
+        })
+    })
 
     const cleanForm = () => {
         setNumero('')
@@ -67,8 +76,8 @@ const CadastroDossie = () => {
                     </Row>
                     </FormGroup>
                     <Button color="primary" onClick={storeDossie}>Salvar</Button>
-                    <Button className='ml-3' outline color="secondary" onClick={cleanForm}>Cancelar</Button>
-                    
+                    <Button className='ml-3' outline color="secondary" onClick={cleanForm}>Cancelar</Button><br/>
+                    <Label className='mt-4'>Número de dossiês cadastrados: {rows}</Label>
                 </Form>
             </CardBody>
        </Card>
