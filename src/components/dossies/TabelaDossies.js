@@ -131,11 +131,11 @@ class TabelaDossies extends Component {
                         </Col>
                         <Col>
                             <Label for="armario">Armário</Label>
-                            <Input value={this.state.selected.armario} id="armario" type='number' onChange={this.changeArmario}/>
+                            <Input value={this.state.selected.armario} id="armario" onChange={this.changeArmario}/>
                         </Col>
                         <Col>
                             <Label for="prateleira">Prateleira</Label>
-                            <Input value={this.state.selected.prateleira} id="prateleira" type='number' onChange={this.changePrateleira}/>
+                            <Input value={this.state.selected.prateleira} id="prateleira" onChange={this.changePrateleira}/>
                         </Col>
                     </Row>
                     </FormGroup>                    

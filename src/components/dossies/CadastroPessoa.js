@@ -20,10 +20,14 @@ const CadastroPessoa = (props) => {
     
     const [matricula, setMatricula] = useState('')
     const changeMatricula = (e) => setMatricula(e.target.value)
+    
+    const [observacao, setObservacao] = useState('')
+    const changeObservacao = (e) => setObservacao(e.target.value)
 
     const cleanForm = () => {
         setNome('')
         setMatricula('')
+        setObservacao('')
         setLabelCaixa({numero : 'Caixa', id : 0})
     }
 
@@ -31,7 +35,7 @@ const CadastroPessoa = (props) => {
         var dossieId = labelCaixa.id
         if (nome !== '') {
             if (matricula !== '') {
-                Api.post('pessoa/', {nome, matricula, dossieId}).then( response => {
+                Api.post('pessoa/', {nome, matricula, observacao, dossieId}).then( response => {
                     toast.sucesso("Pessoa cadastrada com sucesso")
                     cleanForm()
                 }).catch( () => {
@@ -76,6 +80,12 @@ const CadastroPessoa = (props) => {
                                     })}
                                 </DropdownMenu>
                             </ButtonDropdown>
+                        </Col>
+                    </Row>
+                    <Row form>
+                        <Col>
+                            <Label for="observacao">Observações</Label>
+                            <textarea Style='resize:none' className='form-control' value={observacao} rows="2" id="observacao" onChange={changeObservacao}/>
                         </Col>
                     </Row>
                     </FormGroup>

@@ -37,13 +37,17 @@ const CadastroCaixa = (props) => {
         if (numero !== '' ) {
             if (prateleira !== '') {
                 if (armario !== '') {
-                    Api.post('caixa/', {numero, armario, prateleira, setorId}).then( response => {
-                        toast.sucesso("Caixa cadastrada com sucesso")
-                        cleanForm()
-                    }).catch( () => {
-                        toast.erro("Erro ao cadastrar a caixa")
-                        cleanForm()
-                    })
+                    if (setorId !== 0) {
+                        Api.post('caixa/', {numero, armario, prateleira, setorId}).then( response => {
+                            toast.sucesso("Caixa cadastrada com sucesso")
+                            cleanForm()
+                        }).catch( () => {
+                            toast.erro("Erro ao cadastrar a caixa")
+                            cleanForm()
+                        })
+                    }else {
+                        toast.erro("Informe o setor da caixa")
+                    }
                 }else {
                     toast.erro("Informe a Armário da caixa")
                 }
@@ -64,17 +68,17 @@ const CadastroCaixa = (props) => {
                     <Row form>
                         <Col>
                             <Label for="numero">Número da caixa</Label>
-                            <Input value={numero} type='number' id="numero" className='w-50' onChange={changeNumero}/>
+                            <Input value={numero} id="numero" className='w-50' onChange={changeNumero}/>
                         </Col>
                         <Col>
                             <Label for="armario">Armário</Label>
-                            <Input value={armario} id="armario" type='number' className='w-50' onChange={changeArmario}/>
+                            <Input value={armario} id="armario" className='w-50' onChange={changeArmario}/>
                         </Col>
                     </Row>
                     <Row form>
                         <Col>
                             <Label for="prateleira">Prateleira</Label>
-                            <Input value={prateleira} id="prateleira" type='number' className='w-50' onChange={changePrateleira}/>
+                            <Input value={prateleira} id="prateleira" className='w-50' onChange={changePrateleira}/>
                         </Col>
                         <Col>
                             <ButtonDropdown isOpen={dropdownOpenSetor} toggle={toggleSetor}  className="pt-4">

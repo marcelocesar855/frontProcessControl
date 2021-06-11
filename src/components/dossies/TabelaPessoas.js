@@ -11,7 +11,7 @@ class TabelaPessoas extends Component {
 
   state = {
     currentPage : 0,
-    selected : {nome : '', matricula : '', dossie : {numero: 'Caixa', id : 0}},
+    selected : {nome : '', matricula : '', observacao : '', dossie : {numero: 'Caixa', id : 0}},
     dropdownOpenDossie : false,
     showModalEdit: false,
     showModalDel: false,
@@ -46,6 +46,8 @@ class TabelaPessoas extends Component {
   changeNome = (e) => this.setState({selected: {...this.state.selected, nome : e.target.value}})
     
   changeMatricula = (e) => this.setState({selected: {...this.state.selected, matricula : e.target.value}})
+    
+  changeObservacao = (e) => this.setState({selected: {...this.state.selected, observacao : e.target.value}})
 
   changeDossie = (e) => this.setState({
     selected : {...this.state.selected,
@@ -57,12 +59,12 @@ class TabelaPessoas extends Component {
     })
 
   updatePessoa = () => {
-    const { nome, matricula, id } = this.state.selected;
+    const { nome, matricula, observacao, id } = this.state.selected;
     const dossieId = this.state.selected.dossie.id
     if (nome !== '') {
       if (matricula !== 0 ) {
           if (dossieId !== 0) {
-              Api.put(`pessoa/${id}`, {nome, matricula, dossieId}).then( () => {
+              Api.put(`pessoa/${id}`, {nome, matricula, observacao, dossieId}).then( () => {
                 const pessoas = this.state.pessoas.filter(p => this.state.selected.id !== p.id)
                 this.setState({pessoas : [this.state.selected].concat(pessoas)})
                 toast.sucesso("Dossiê atualizado com sucesso")
@@ -165,6 +167,12 @@ class TabelaPessoas extends Component {
                             </ButtonDropdown>
                         </Col>
                     </Row>
+                    <Row form>
+                        <Col>
+                            <Label for="nome">Observações</Label>
+                            <textarea Style='resize:none' className='form-control' value={this.state.selected.observacao} rows="2" id="observacao" onChange={this.changeObservacao}/>
+                        </Col>
+                      </Row>
                   </FormGroup>
                 </Form>
             </ModalBody>

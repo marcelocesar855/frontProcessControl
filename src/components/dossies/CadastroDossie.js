@@ -1,45 +1,59 @@
 
-import React, {useState, useEffect} from 'react';
+import React, {Component} from 'react';
 import * as toast from '../../utils/toasts'
 import Api from '../../services/Api'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as dossiesActions from '../../actions/dossies';
 import { Form, FormGroup, Input, Label, Card, CardTitle, CardBody, Button, Row, Col } from 'reactstrap';
 
-const CadastroDossie = () => {
-
-    const [numero, setNumero] = useState('')
-    const changeNumero = (e) => setNumero(e.target.value)
-
-    const [prateleira, setPrateleira] = useState('')
-    const changePrateleira = (e) => setPrateleira(e.target.value)
-    
-    const [armario, setArmario] = useState('')
-    const changeArmario = (e) => setArmario(e.target.value)
-
-    const [rows, setRows] = useState('')
-
-    useEffect(() => {
-        Api.get("dossie-rows").then(response =>{
-            console.log(response.data)
-            setRows(response.data)
-        })
-    })
-
-    const cleanForm = () => {
-        setNumero('')
-        setPrateleira('')
-        setArmario('')
+class CadastroDossie extends Component {
+    state = {
+        numero : '',
+        prateleira : '',
+        armario : '',
+        rows: ''
     }
 
-    const storeDossie = () => {
+    componentDidMount = async () => {
+        await Api.get("dossie-rows").then(response =>{
+             this.setState({rows : response.data})
+        })
+    }
+    
+    changeNumero = (e) => this.setState({numero : e.target.value})
+    
+    changePrateleira = (e) => this.setState({prateleira : e.target.value})
+
+    changeArmario = (e) => this.setState({armario : e.target.value})
+
+    cleanForm = () => {
+        this.setState({
+            numero : '',
+            prateleira : '',
+            armario : '',
+            rows: ''})
+    }
+
+    storeDossie = () => {
+        const {numero, armario, prateleira} = this.state
         if (numero !== '' ) {
             if (prateleira !== '') {
                 if (armario !== '') {
                     Api.post('dossie/', {numero, armario, prateleira}).then( response => {
+                        Api.get('dossies/').then( response => {
+                            this.props.searchDossie(response.data)
+                        }).catch(erro => {
+                            console.log(erro)
+                        })
                         toast.sucesso("Caixa cadastrada com sucesso")
-                        cleanForm()
+                        Api.get("dossie-rows").then(response =>{
+                            this.setState({rows : response.data})
+                        })
+                        this.cleanForm()
                     }).catch( () => {
                         toast.erro("Erro ao cadastrar a caixa")
-                        cleanForm()
+                        this.cleanForm()
                     })
                 }else {
                     toast.erro("Informe a armário da caixa")
@@ -52,36 +66,45 @@ const CadastroDossie = () => {
         }
     }
 
-    return (
-        <Card className="p-3 mt-3">
-            <CardTitle><h3>Cadastro de caixas de dossiês</h3></CardTitle>
-            <CardBody>
-                <Form>
-                    <FormGroup>
-                    <Row form>
-                        <Col>
-                            <Label for="numero">Número da caixa</Label>
-                            <Input value={numero} id="numero" className='w-50' onChange={changeNumero}/>
-                        </Col>
-                        <Col>
-                            <Label for="armario">Armário</Label>
-                            <Input value={armario} id="armario" type='number' className='w-50' onChange={changeArmario}/>
-                        </Col>
-                    </Row>
-                    <Row form>
-                        <Col>
-                            <Label for="prateleira">Prateleira</Label>
-                            <Input value={prateleira} id="prateleira" type='number' className='w-25' onChange={changePrateleira}/>
-                        </Col>
-                    </Row>
-                    </FormGroup>
-                    <Button color="primary" onClick={storeDossie}>Salvar</Button>
-                    <Button className='ml-3' outline color="secondary" onClick={cleanForm}>Cancelar</Button><br/>
-                    <Label className='mt-4'>Número de dossiês cadastrados: {rows}</Label>
-                </Form>
-            </CardBody>
-       </Card>
-    )
+    render () {
+        return (
+            <Card className="p-3 mt-3">
+                <CardTitle><h3>Cadastro de caixas de dossiês</h3></CardTitle>
+                <CardBody>
+                    <Form>
+                        <FormGroup>
+                        <Row form>
+                            <Col>
+                                <Label for="numero">Número da caixa</Label>
+                                <Input value={this.state.numero} id="numero" className='w-50' onChange={this.changeNumero}/>
+                            </Col>
+                            <Col>
+                                <Label for="armario">Armário</Label>
+                                <Input value={this.state.armario} id="armario" className='w-50' onChange={this.changeArmario}/>
+                            </Col>
+                        </Row>
+                        <Row form>
+                            <Col>
+                                <Label for="prateleira">Prateleira</Label>
+                                <Input value={this.state.prateleira} id="prateleira" className='w-25' onChange={this.changePrateleira}/>
+                            </Col>
+                        </Row>
+                        </FormGroup>
+                        <Button color="primary" onClick={this.storeDossie}>Salvar</Button>
+                        <Button className='ml-3' outline color="secondary" onClick={this.cleanForm}>Cancelar</Button><br/>
+                        <Label className='mt-4'>Número de dossiês cadastrados: {this.state.rows}</Label>
+                    </Form>
+                </CardBody>
+        </Card>
+        )
+    }
 }
 
-export default CadastroDossie;
+const mapStateToProps = state => ({
+    dossies: state.dossies
+  });
+
+const mapDispatchToProps = dispatch =>
+bindActionCreators(Object.assign({}, dossiesActions), dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(CadastroDossie);

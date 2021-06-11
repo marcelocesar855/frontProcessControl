@@ -14,7 +14,7 @@ class EditarCaixa extends Component {
         hidden : true,
         numero : '',
         prateleira : '',
-        estante : '',
+        armario : '',
         dropdownOpenSetor : false,
         labelSetor : {sigla : 'Setor', id : 0}
     }
@@ -34,7 +34,7 @@ class EditarCaixa extends Component {
 
     changeNumero = (e) => this.setState({numero : e.target.value})
 
-    changeEstante = (e) => this.setState({estante : e.target.value})
+    changeArmario = (e) => this.setState({armario : e.target.value})
 
     changePrateleira = (e) => this.setState({prateleira : e.target.value})
 
@@ -44,14 +44,14 @@ class EditarCaixa extends Component {
             labelSetor : {sigla : 'Setor', id : 0},
             numero : '',
             prateleira : '',
-            estante : ''
+            armario : ''
         })
     }
 
     buscarCaixa = async () => {
-        const {numero,estante,prateleira} = this.state
+        const {numero,armario,prateleira} = this.state
         const setorId = this.state.labelSetor.id
-        await Api.post('caixa-params/', {numero,estante,prateleira,setorId}).then( response => {
+        await Api.post('caixa-params/', {numero,armario,prateleira,setorId}).then( response => {
             this.setState({caixas : response.data})
             if (this.state.caixas.length <= 0){
                 toast.info("Nenhuma caixa encontrada com os filtros informados")
@@ -86,7 +86,7 @@ class EditarCaixa extends Component {
                                     })}
                                 </DropdownMenu>
                             </ButtonDropdown>
-                            <Input className='rounded-left ml-3' type='number' placeholder='Estante' value={this.state.estante} onChange={this.changeEstante}/>
+                            <Input className='rounded-left ml-3' type='number' placeholder='Armário' value={this.state.armario} onChange={this.changeArmario}/>
                             <Input className='rounded-right' type='number' placeholder='Prateleira' value={this.state.prateleira} onChange={this.changePrateleira}/>
                             <Button className='ml-3' outline onClick={this.cleanFilters}>Limpar filtros</Button>
                         </InputGroup>

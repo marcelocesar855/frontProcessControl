@@ -63,7 +63,7 @@ class TabelaCaixas extends Component {
     const setorId = this.state.selected.setor.id
     if (numero !== '') {
         if(prateleira !== ''){
-            if (armario !== 0 ) {
+            if (armario !== '') {
                 if (setorId !== 0) {
                     Api.put(`caixa/${id}`, {numero, prateleira, armario, setorId}).then( () => {
                       const caixas = this.state.caixas.filter(c => this.state.selected.id !== c.id)

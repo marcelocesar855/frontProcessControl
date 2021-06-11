@@ -14,7 +14,7 @@ class TabelaProcesso extends Component {
     caixas:[],
     currentPage: 0,
     selected:{numero : '', data : '', assunto : {descricao : 'Assunto', id : 0}, caixa : {numero : 'Caixa', id : 0, setor : {sigla : 'Setor', id : 0}},
-    volumes : 0, setor : {sigla : 'Setor', id : 0}, interessado : ''},
+    volumes : 0, interessado : '', observacao : '', setor : {sigla : 'Setor', id : 0}},
     showModalEdit: false,
     showModalDel: false,
     showModalArq: false,
@@ -68,8 +68,10 @@ class TabelaProcesso extends Component {
   }
 
   desarquivarProcesso = () => {
-      const { id, setorId } = this.state.selected;
+      const { id } = this.state.selected;
+      const setorId = this.state.selected.setor.id;
       Api.put(`processo/${id}`, {setorId}).then( () => {
+        this.setState({selected : {...this.state.selected, setorId : setorId}})
         this.props.updateProcesso(this.state.selected)
         const processos = this.state.processos.filter(p => this.state.selected.id !== p.id)
         this.setState({processos : [this.state.selected].concat(processos)})
@@ -88,8 +90,7 @@ class TabelaProcesso extends Component {
   changeSetor = async (e) => {
     this.setState({
       selected : {...this.state.selected,
-        caixa : {
-          numero : 'Caixa', id : 0, setor : {
+        caixa : {...this.state.selected.caixa, setor : {
             sigla : e.target.textContent,
             id : e.target.value
           }
@@ -102,13 +103,10 @@ class TabelaProcesso extends Component {
 
 changeSetorArq = async (e) => {
   this.setState({
-    selected : {...this.state.selected,
-      setor : {
-        sigla : e.target.textContent,
-        id : e.target.value
-      },
-      setorId : e.target.value  
-    }
+    selected : {...this.state.selected, setor : {
+      sigla : e.target.textContent,
+      id : e.target.value
+    }}
   })
 }
 
@@ -145,6 +143,12 @@ changeSetorArq = async (e) => {
       interessado : e.target.value
   }})
 
+  changeObservacao = (e) => this.setState({
+    selected :{
+      ...this.state.selected, 
+      observacao : e.target.value
+  }})
+
   changeCaixa = (e) => this.setState({
     selected : {...this.state.selected,
       caixa : {
@@ -168,7 +172,7 @@ changeSetorArq = async (e) => {
   }})
 
   updateProcesso = () => {
-    const { numero, data, id, volumes, interessado } = this.state.selected;
+    const { numero, data, id, volumes, interessado, observacao } = this.state.selected;
       const caixaId = this.state.selected.caixa.id
       const assuntoId = this.state.selected.assunto.id
       if (numero !== '') {
@@ -177,7 +181,7 @@ changeSetorArq = async (e) => {
               if(interessado !== ''){
                   if (caixaId !== 0 ) {
                     if (assuntoId !== 0) {
-                        Api.put(`processo/${id}`, {numero, data, volumes, interessado ,caixaId, assuntoId}).then( () => {
+                        Api.put(`processo/${id}`, {numero, data, volumes, interessado, observacao, caixaId, assuntoId}).then( () => {
                           this.props.updateProcesso(this.state.selected)
                           const processos = this.state.processos.filter(p => this.state.selected.id !== p.id)
                           this.setState({processos : [this.state.selected].concat(processos)})
@@ -320,7 +324,9 @@ changeSetorArq = async (e) => {
                               })}
                             </DropdownMenu>
                         </ButtonDropdown>
-                    </FormGroup>
+                        <Label for="observacao">Observação</Label>
+                        <textarea Style='resize:none' className='form-control' value={this.state.selected.observacao} rows="2" id="observacao" onChange={this.changeObservacao}/>
+                     </FormGroup>
                 </Form>
             </ModalBody>
             <ModalFooter>
