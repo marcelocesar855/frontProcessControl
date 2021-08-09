@@ -85,7 +85,7 @@ class EditarProcesso extends Component {
                     <CardBody>
                     <Row className="pb-3 w-75">
                         <InputGroup>
-                            <Input className='rounded-left' placeholder='Número do processo' value={this.state.numero} onChange={this.changeNumero}/>
+                            <Input className='rounded-left' placeholder='Número do processo ou interessado' value={this.state.numero} onChange={this.changeNumero}/>
                             <InputGroupAddon addonType="append"><Button className='rounded-right' onClick={this.buscarProcessos}>Buscar</Button></InputGroupAddon>
                             <ButtonDropdown className='ml-3' isOpen={this.state.dropdownOpenSetor} toggle={this.toggleSetor}>
                                 <DropdownToggle caret>

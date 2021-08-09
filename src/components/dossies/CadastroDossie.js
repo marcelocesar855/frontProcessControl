@@ -92,7 +92,7 @@ class CadastroDossie extends Component {
                         </FormGroup>
                         <Button color="primary" onClick={this.storeDossie}>Salvar</Button>
                         <Button className='ml-3' outline color="secondary" onClick={this.cleanForm}>Cancelar</Button><br/>
-                        <Label className='mt-4'>Número de dossiês cadastrados: {this.state.rows}</Label>
+                        <Label className='mt-4'>Número de caixas cadastradas: {this.state.rows}</Label>
                     </Form>
                 </CardBody>
         </Card>

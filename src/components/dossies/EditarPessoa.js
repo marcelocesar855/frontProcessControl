@@ -33,6 +33,7 @@ class EditarPessoa extends Component {
 
     changeMatricula = (e) => this.setState({matricula : e.target.value})
 
+    changePessoas (e) {this.setState({pessoas : e})}
 
     cleanFilters = () => {
         this.setState({
@@ -85,7 +86,7 @@ class EditarPessoa extends Component {
                         </InputGroup>
                     </Row>
                     </CardBody>
-                    <TabelaPessoa pessoasEdit={this.state.pessoas} hidden={this.state.hidden}/>
+                    <TabelaPessoa pessoasEdit={this.state.pessoas} hidden={this.state.hidden} onChange={this.changePessoas}/>
                 </Card>
             </div>
         )

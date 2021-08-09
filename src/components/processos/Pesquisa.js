@@ -114,7 +114,7 @@ class Pesquisa extends Component {
                             })}
                         </DropdownMenu>
                     </ButtonDropdown>
-                    <Input className='ml-3 rounded-left' placeholder='Número do processo' value={this.state.numero} onChange={this.changeNumero}/>
+                    <Input className='ml-3 rounded-left' placeholder='Número do processo ou interessado' value={this.state.numero} onChange={this.changeNumero}/>
                     <InputGroupAddon addonType="append" onClick={this.search}><Button className='rounded-right'>Pesquisar</Button></InputGroupAddon>
                     <Button className='ml-3' outline onClick={this.cleanFilters}>Limpar filtros</Button>
                 </InputGroup>

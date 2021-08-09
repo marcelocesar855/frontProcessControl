@@ -17,7 +17,7 @@ class EditarAssunto extends Component {
     changeDescricao = (e) => this.setState({descricao : e.target.value})
 
     cleanFilters = () => {
-        this.setState({nome :  ''})
+        this.setState({descricao :  ''})
     }
 
     buscarAssunto = async () => {

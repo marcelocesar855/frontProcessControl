@@ -1,6 +1,6 @@
 
 import { connect } from 'react-redux';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import * as toast from '../../utils/toasts'
 import Api from '../../services/Api'
 import { Form, FormGroup, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem, Input, Label, Card, CardTitle, CardBody, Button, Row, Col } from 'reactstrap';
@@ -15,6 +15,17 @@ const CadastroCaixa = (props) => {
         sigla : e.target.textContent,
         id : e.target.value
     })
+
+    
+
+    const [rows, setRows] = useState(0)
+    const changeRows = (e) => setRows(e)
+
+    useEffect(() => {
+        Api.get("caixa-rows").then(response =>{
+            changeRows(response.data)
+        })
+    });
 
     const [numero, setNumero] = useState('')
     const changeNumero = (e) => setNumero(e.target.value)
@@ -97,7 +108,8 @@ const CadastroCaixa = (props) => {
                     </Row>
                     </FormGroup>
                     <Button color="primary" onClick={storeCaixa}>Salvar</Button>
-                    <Button className='ml-3' outline color="secondary" onClick={cleanForm}>Cancelar</Button>
+                    <Button className='ml-3' outline color="secondary" onClick={cleanForm}>Cancelar</Button><br/>
+                    <Label className='mt-4'>Número de caixas cadastrados: {rows}</Label>
                     
                 </Form>
             </CardBody>

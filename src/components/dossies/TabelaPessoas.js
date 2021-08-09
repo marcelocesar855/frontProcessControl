@@ -22,6 +22,10 @@ class TabelaPessoas extends Component {
     this.setState({pessoas : this.props.pessoasEdit})
   }
 
+  shouldComponentUpdate() {
+    return true;
+  }
+
    handlePageClick = (e, index) => {
     e.preventDefault();
     this.setState({currentPage: index});
@@ -65,8 +69,11 @@ class TabelaPessoas extends Component {
       if (matricula !== 0 ) {
           if (dossieId !== 0) {
               Api.put(`pessoa/${id}`, {nome, matricula, observacao, dossieId}).then( () => {
-                const pessoas = this.state.pessoas.filter(p => this.state.selected.id !== p.id)
-                this.setState({pessoas : [this.state.selected].concat(pessoas)})
+                alert('a')
+                const pessoas = this.props.pessoasEdit.filter(p => this.state.selected.id !== p.id)
+                alert('a')
+                this.props.onChange([this.state.selected].concat(pessoas))
+                alert('a')
                 toast.sucesso("Dossiê atualizado com sucesso")
               }).catch( () => {
                   toast.erro("Erro ao atualizar o dossiê")
@@ -86,8 +93,8 @@ class TabelaPessoas extends Component {
     const { id } = this.state.selected;
     Api.delete(`pessoa/${id}`).then( () => {
       this.props.removePessoa(this.state.selected)
-      const pessoas = this.state.pessoas.filter(p => this.state.selected.id !== p.id)
-      this.setState({pessoas})
+      const pessoas = this.props.pessoasEdit.filter(p => this.state.selected.id !== p.id)
+      this.props.change({pessoas})
       toast.sucesso("Dossiê excluído com sucesso")
     }).catch( (err) => {
         toast.erro("Erro ao excluir o dossiê")
@@ -109,7 +116,7 @@ class TabelaPessoas extends Component {
                 </tr>
             </thead>
             <tbody>
-            {this.state.pessoas
+            {this.props.pessoasEdit
               .slice(this.state.currentPage * 10, (this.state.currentPage + 1) * 10)
               .map(pessoa => {
                 return (
