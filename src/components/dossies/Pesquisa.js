@@ -87,8 +87,8 @@ class Pesquisa extends Component {
                             })}
                         </DropdownMenu>
                     </ButtonDropdown>
-                    <Input className='ml-3 rounded' placeholder='Matrícula' value={this.state.matricula} onChange={this.changeMatricula}/>
                     <Input className='ml-3 rounded-left' placeholder='Nome' value={this.state.nome} onChange={this.changeNome}/>
+                    <Input className='ml-3 rounded' placeholder='Matrícula' value={this.state.matricula} onChange={this.changeMatricula}/>
                     <InputGroupAddon addonType="append" onClick={this.search}><Button className='rounded-right'>Pesquisar</Button></InputGroupAddon>
                     <Button className='ml-3' outline onClick={this.cleanFilters}>Limpar filtros</Button>
                 </InputGroup>

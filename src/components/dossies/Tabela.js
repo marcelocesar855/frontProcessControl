@@ -60,8 +60,7 @@ class Tabela extends Component {
           currentPage={this.state.currentPage}
           handlePageClick={this.handlePageClick}
           handlePreviousClick={this.handlePreviousClick}
-          handleNextClick={this.handleNextClick}
-        />
+          handleNextClick={this.handleNextClick}/>
       </React.Fragment>
   )}
 }

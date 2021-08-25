@@ -20,10 +20,11 @@ class TabelaPessoas extends Component {
 
   componentWillReceiveProps() {
     this.setState({pessoas : this.props.pessoasEdit})
+    this.forceUpdate()
   }
 
-  shouldComponentUpdate() {
-    return true;
+  componentWillMount(){
+    this.forceUpdate()
   }
 
    handlePageClick = (e, index) => {
@@ -56,8 +57,10 @@ class TabelaPessoas extends Component {
   changeDossie = (e) => this.setState({
     selected : {...this.state.selected,
       dossie : {
-          numero : e.target.textContent,
-          id : e.target.value
+          prateleira : e.prateleira,
+          armario : e.armario,
+          numero : e.numero,
+          id : e.id
         }
       }  
     })
@@ -69,11 +72,10 @@ class TabelaPessoas extends Component {
       if (matricula !== 0 ) {
           if (dossieId !== 0) {
               Api.put(`pessoa/${id}`, {nome, matricula, observacao, dossieId}).then( () => {
-                alert('a')
+                this.props.updatePessoa(this.state.selected)
                 const pessoas = this.props.pessoasEdit.filter(p => this.state.selected.id !== p.id)
-                alert('a')
-                this.props.onChange([this.state.selected].concat(pessoas))
-                alert('a')
+                this.setState({pessoas : [this.state.selected].concat(pessoas)})
+                
                 toast.sucesso("Dossiê atualizado com sucesso")
               }).catch( () => {
                   toast.erro("Erro ao atualizar o dossiê")
@@ -116,7 +118,7 @@ class TabelaPessoas extends Component {
                 </tr>
             </thead>
             <tbody>
-            {this.props.pessoasEdit
+            {this.state.pessoas
               .slice(this.state.currentPage * 10, (this.state.currentPage + 1) * 10)
               .map(pessoa => {
                 return (
@@ -167,7 +169,7 @@ class TabelaPessoas extends Component {
                                 <DropdownMenu>
                                     {this.props.dossies.map(dossie => {
                                         return(
-                                            <DropdownItem key={dossie.id} disabled={dossie.id === 0 ? true : false} onClick={this.changeDossie} value={dossie.id}>{dossie.numero}</DropdownItem>
+                                            <DropdownItem key={dossie.id} disabled={dossie.id === 0 ? true : false} onClick={() => this.changeDossie(dossie)} value={dossie.id}>{dossie.numero}</DropdownItem>
                                         )
                                     })}
                                 </DropdownMenu>
